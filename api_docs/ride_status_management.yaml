@@ -1,0 +1,173 @@
+openapi: 3.0.3
+info:
+  title: Ride Status Update By Driver
+  description: Ride Status Update By Driver
+  version: 1.0.0
+servers:
+  - url: 'http://localhost:8080/drivers/v1'
+
+paths:
+  /rides/active:
+    get:
+      summary: "View Active Ride Details of a Driver"
+      description: "Authenticated drivers will be able to view the details of the active ride they are assigned to."
+      security:
+        - BearerAuth: [ ]
+      responses:
+        200:
+          description: "Returns active ride details of the driver"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ride'
+        404:
+          description: "No active rides"
+          content:
+            { }
+
+  /rides/active/start:
+    put:
+      summary: "Start Ride"
+      description: "Authenticated drivers will be able to start the ride once they reach the pickup location."
+      security:
+        - BearerAuth: [ ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateRide'
+      responses:
+        200:
+          description: "Ride started"
+          content:
+            { }
+        400:
+          description: "Could not start the ride"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientErrorResponse'
+
+  /rides/active/end:
+    put:
+      summary: "End Ride"
+      description: "Authenticated drivers will be able to end the ride once they reach the dropoff location."
+      security:
+        - BearerAuth: [ ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateRide'
+      responses:
+        200:
+          description: "Ride ended"
+          content:
+            { }
+        400:
+          description: "Could not end the ride"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientErrorResponse'
+
+  /rides/active/cancel:
+    delete:
+      summary: "Cancel Ride"
+      description: "Authenticated drivers will be able to cancel the ride if the ride has not yet started."
+      security:
+        - BearerAuth: [ ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActiveRideCancellation'
+      responses:
+        200:
+          description: "Ride cancelled. Driver can now accept rides"
+          content:
+            { }
+        400:
+          description: "Could not cancel the ride"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientErrorResponse'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+
+  schemas:
+    UpdateRide:
+      type: object
+      properties:
+        ride_id:
+          type: string
+        lat:
+          type: number
+        lng:
+          type: number
+
+    ActiveRideCancellation:
+      type: object
+      properties:
+        ride_id:
+          type: string
+        lat:
+          type: number
+        lng:
+          type: number
+        reason:
+          type: string
+
+    Ride:
+      type: object
+      description: "Active Ride"
+      properties:
+        ride_id:
+          type: string
+        distance:
+          type: number
+        pickup:
+          type: object
+          $ref: "#/components/schemas/RidePlaceDetails"
+        dropoff:
+          type: object
+          $ref: "#/components/schemas/RidePlaceDetails"
+        rider:
+          type: object
+          $ref: '#/components/schemas/Rider'
+    
+    RidePlaceDetails:
+      type: object
+      properties:
+        lat:
+          type: number
+        lng:
+          type: number
+        name:
+          type: string
+        timestamp:
+          type: string
+          description: "Timestamp in UTC in ISO 8601 format"
+
+    Rider:
+      type: object
+      description: "Rider Details"
+      properties:
+        first_name:
+          type: string
+        last_name:
+          type: string
+        phone:
+          type: string
+
+    ClientErrorResponse:
+      type: object
+      description: 'Invalid Request'
+      properties:
+        message:
+          type: string

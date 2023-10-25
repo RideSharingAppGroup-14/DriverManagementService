@@ -1,0 +1,74 @@
+openapi: 3.0.3
+info:
+  title: Driver Earnings APIs
+  description: Driver Earnings APIs
+  version: 1.0.0
+servers:
+  - url: 'http://localhost:8080/drivers/v1'
+
+paths:
+  /earnings:
+    get:
+      summary: "Get Earnings' details of the Driver"
+      description: "Authenticated drivers will be able to view their earnings summary."
+      security:
+        - BearerAuth: [ ]
+      responses:
+        200:
+          description: "Returns earnings summary of the driver"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Earning'
+        404:
+          description: "No earnings"
+          content:
+            { }
+    post:
+      summary: "Update Earnings"
+      description: "Update Earnings' details of the driver. It should only be called by other service."
+      security:
+        - BearerAuth: [ ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                ride_id:
+                  type: string
+                amount:
+                  type: number
+      responses:
+        200:
+          description: "Amount added in the earnings"
+          content:
+            {}
+        400:
+          description: "Invalid request or field missing"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientErrorResponse'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+
+  schemas:
+    Earning:
+      type: object
+      properties:
+        total_earnings:
+          type: number
+        current_balance:
+          type: number
+
+    ClientErrorResponse:
+      type: object
+      description: 'Invalid Request'
+      properties:
+        message:
+          type: string
