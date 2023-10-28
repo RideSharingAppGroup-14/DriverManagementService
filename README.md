@@ -7,11 +7,11 @@ It exposes APIs for the following functionalities:
 1. [**Profile Management**](api_docs/profile_management.yaml)
    1. *View Profile*
    2. *Update Profile*
-   3. *Upload Driving License*
-   4. *Vehicle Onboarding*
-   5. *Vehicle Details*
-   6. *Vehicle Update*
-   7. *Vehicle Delete*
+   3. ~~*Upload Driving License*~~
+   4. ~~*Vehicle Onboarding*~~
+   5. ~~*Vehicle Details*~~
+   6. ~~*Vehicle Update*~~
+   7. ~~*Vehicle Delete*~~
 2. [**Driver Status Management**](api_docs/driver_status_management.yaml)
    1. Update Availability
    2. Update Location
@@ -31,3 +31,9 @@ It exposes APIs for the following functionalities:
    2. *Update Earnings*
 
 The API documentation is under folder `api_docs` and follows *OpenAPI 3.0 specification*.
+
+## References
+
+OpenAPI Links:
+- [OpenAPI Specification - GitHub](https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.0.3.md)
+- [OpenAPI - Swagger](https://swagger.io/specification/)

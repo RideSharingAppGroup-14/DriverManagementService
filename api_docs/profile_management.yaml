@@ -171,10 +171,6 @@ components:
           type: string
         email:
           type: string
-        profile_pic:
-          type: string
-        rating:
-          type: number
         gender:
           type: string
         dob:
@@ -187,6 +183,8 @@ components:
           type: string
         is_approved:
           type: boolean
+          default: true
+          description: "Currently, it will be auto-approved. So, value will always be true."
         driving_license:
           type: object
           $ref: "#/components/schemas/DrivingLicense"
@@ -197,8 +195,6 @@ components:
         phone:
           type: string
         email:
-          type: string
-        profile_pic:
           type: string
         city:
           type: string
@@ -229,7 +225,8 @@ components:
           type: string
         expiration_date:
           type: string
-          description: "Date in yyyy-MM-dd format"
+          format: date
+          description: "Date format in yyyy-MM-dd"
 
     ClientErrorResponse:
       type: object

@@ -39,6 +39,7 @@ paths:
                   type: string
                 amount:
                   type: number
+                  format: float
       responses:
         200:
           description: "Amount added in the earnings"
@@ -63,8 +64,10 @@ components:
       properties:
         total_earnings:
           type: number
+          format: float
         current_balance:
           type: number
+          format: float
 
     ClientErrorResponse:
       type: object

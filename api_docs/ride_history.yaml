@@ -77,8 +77,10 @@ components:
           type: string
         amount:
           type: number
+          format: float
         distance:
           type: number
+          format: float
         duration:
           type: integer
           description: "Duration in minutes"
@@ -94,20 +96,21 @@ components:
         rider:
           type: object
           $ref: "#/components/schemas/Rider"
-        vehicle_id:
-          type: string
     
     RidePlaceDetails:
       type: object
       properties:
-        lat:
+        latitude:
           type: number
-        lng:
+          format: double
+        longitude:
           type: number
+          format: double
         name:
           type: string
         timestamp:
           type: string
+          format: date-time
           description: "Timestamp in UTC in ISO 8601 format"
 
     Rider:
@@ -119,8 +122,6 @@ components:
           type: string
         last_name:
           type: string
-        rating:
-          type: number
     
     ClientErrorResponse:
       type: object

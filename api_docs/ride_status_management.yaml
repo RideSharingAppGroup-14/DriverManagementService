@@ -35,7 +35,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UpdateRide'
+              $ref: '#/components/schemas/StartRide'
       responses:
         200:
           description: "Ride started"
@@ -58,7 +58,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UpdateRide'
+              $ref: '#/components/schemas/EndRide'
       responses:
         200:
           description: "Ride ended"
@@ -101,25 +101,31 @@ components:
       scheme: bearer
 
   schemas:
-    UpdateRide:
+    BaseRideUpdateRequest:
       type: object
       properties:
         ride_id:
           type: string
-        lat:
+        latitude:
           type: number
-        lng:
+          format: double
+        longitude:
           type: number
+          format: double
+
+    StartRide:
+      allOf:
+        - $ref: '#/components/schemas/BaseRideUpdateRequest'
+
+    EndRide:
+      allOf:
+        - $ref: '#/components/schemas/BaseRideUpdateRequest'
 
     ActiveRideCancellation:
+      allOf:
+        - $ref: '#/components/schemas/BaseRideUpdateRequest'
       type: object
       properties:
-        ride_id:
-          type: string
-        lat:
-          type: number
-        lng:
-          type: number
         reason:
           type: string
 
@@ -131,6 +137,7 @@ components:
           type: string
         distance:
           type: number
+          format: double
         pickup:
           type: object
           $ref: "#/components/schemas/RidePlaceDetails"
@@ -144,14 +151,17 @@ components:
     RidePlaceDetails:
       type: object
       properties:
-        lat:
+        latitude:
           type: number
-        lng:
+          format: double
+        longitude:
           type: number
+          format: double
         name:
           type: string
         timestamp:
           type: string
+          format: date-time
           description: "Timestamp in UTC in ISO 8601 format"
 
     Rider:

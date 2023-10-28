@@ -101,10 +101,12 @@ components:
       type: object
       description: 'Location object'
       properties:
-        lat:
+        latitude:
           type: number
-        lng:
+          format: double
+        longitude:
           type: number
+          format: double
 
     ClientErrorResponse:
       type: object

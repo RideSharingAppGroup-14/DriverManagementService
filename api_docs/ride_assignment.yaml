@@ -21,11 +21,13 @@ paths:
               properties:
                 ride_id:
                   type: string
-                lat:
+                latitude:
                   type: number
+                  format: double
                   description: "Pickup location latitude"
-                lng:
+                longitude:
                   type: number
+                  format: double
                   description: "Pickup location longitude"
                 city_id:
                   type: integer
