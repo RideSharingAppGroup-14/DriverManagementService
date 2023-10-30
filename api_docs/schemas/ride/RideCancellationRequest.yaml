@@ -1,0 +1,6 @@
+allOf:
+  - $ref: 'BaseRideUpdateRequest.yaml'
+type: object
+properties:
+  reason:
+    type: string

@@ -5,31 +5,36 @@ info:
   version: 1.0.0
 servers:
   - url: 'http://localhost:8080/drivers/v1'
+security:
+  - BearerAuth: [ ]
+components:
+  securitySchemes:
+    BearerAuth:
+      $ref: './securitySchemes/BearerAuth.yaml'
 
 paths:
-  /profile:
+  /profile/{driver_id}:
     get:
       summary: "View Driver's profile"
       description: "Authenticated drivers can view their profile."
-      security:
-        - BearerAuth: [ ]
+      parameters:
+        - $ref: './parameters/PathParamDriver.yaml'
       responses:
         200:
           description: "Returns Driver's profile"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Driver'
+                $ref: './schemas/driver/Driver.yaml'
+  /profile:
     put:
       summary: 'Update profile'
       description: "Authenticated drivers will be able to update some of the details in their profile."
-      security:
-        - BearerAuth: [ ]
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DriverUpdateRequest'
+              $ref: './schemas/driver/DriverUpdateProfileRequest.yaml'
       responses:
         200:
           description: 'Successfully updated profile'
@@ -40,197 +45,4 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ClientErrorResponse'
-
-  /document/dl:
-    post:
-      summary: "Upload Driver's DL for approval"
-      description: "Authenticated drivers will be available to upload their Driving License details."
-      security:
-        - BearerAuth: [ ]
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/DrivingLicense'
-      responses:
-        200:
-          description: "Details saved successfully"
-          content:
-            { }
-        400:
-          description: 'Validation error or missing fields'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ClientErrorResponse'
-
-  /vehicle:
-    get:
-      summary: "Get onboarded vehicle's details"
-      description: "Authenticated drivers will be able to view the details of their vehicle."
-      security:
-        - BearerAuth: [ ]
-      responses:
-        200:
-          description: "Vehicle successfully onboarded"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Vehicle"
-        404:
-          description: "No vehicle is onboarded yet or is being onboarded"
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ClientErrorResponse'
-    post:
-      summary: "Onboard Driver's vehicle"
-      description: "Authenticated drivers will be able to upload the vehicle details for onboarding."
-      security:
-        - BearerAuth: [ ]
-      requestBody:
-        content:
-          application/json:
-            schema:
-              required:
-                - name
-                - type
-                - seats
-                - registered_no
-              $ref: '#/components/schemas/Vehicle'
-      responses:
-        200:
-          description: "Vehicle successfully onboarded"
-          content:
-            { }
-        400:
-          description: "Invalid request or missing fields or one vehicle is already onboarded"
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ClientErrorResponse'
-    put:
-      summary: "Update vehicle details"
-      description: "Authenticated drivers will be able to update some of the details of the onboarded vehicle. For changing the details which requires approval, they will have to remove and add it again."
-      security:
-        - BearerAuth: [ ]
-      requestBody:
-        content:
-          application/json:
-            schema:
-              required:
-                - name
-              $ref: "#/components/schemas/Vehicle"
-      responses:
-        200:
-          description: "Vehicle updated successfully"
-          content:
-            { }
-        400:
-          description: "Invalid request or fields missing"
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ClientErrorResponse'
-    delete:
-      summary: "Delete vehicle details"
-      description: "Authenticated drivers will be able to remove their vehicle details. There can be a case when they are changing their vehicle and it has to go through approval process."
-      security:
-        - BearerAuth: [ ]
-      responses:
-        200:
-          description: "Vehicle deleted successfully"
-          content:
-            { }
-        400:
-          description: "Invalid request or fields missing"
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ClientErrorResponse'      
-
-components:
-  securitySchemes:
-    BearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
-
-  schemas:
-    Driver:
-      type: object
-      properties:
-        driver_id:
-          type: string
-        first_name:
-          type: string
-        last_name:
-          type: string
-        phone:
-          type: string
-        email:
-          type: string
-        gender:
-          type: string
-        dob:
-          type: string
-        city:
-          type: string
-        state:
-          type: string
-        country:
-          type: string
-        is_approved:
-          type: boolean
-          default: true
-          description: "Currently, it will be auto-approved. So, value will always be true."
-        driving_license:
-          type: object
-          $ref: "#/components/schemas/DrivingLicense"
-    
-    DriverUpdateRequest:
-      type: object
-      properties:
-        phone:
-          type: string
-        email:
-          type: string
-        city:
-          type: string
-        state:
-          type: string
-        country:
-          type: string
-
-    Vehicle:
-      type: object
-      properties:
-        vehicle_id:
-          type: string
-        name:
-          type: string
-        type:
-          type: string
-          description: 'Hatchback/Sedan/SUV'
-        seats:
-          type: integer
-        registered_no:
-          type: string
-      
-    DrivingLicense:
-      type: object
-      properties:
-        license_no:
-          type: string
-        expiration_date:
-          type: string
-          format: date
-          description: "Date format in yyyy-MM-dd"
-
-    ClientErrorResponse:
-      type: object
-      description: 'Invalid Request'
-      properties:
-        message:
-          type: string
+                $ref: './schemas/errors/ClientErrorResponse.yaml'

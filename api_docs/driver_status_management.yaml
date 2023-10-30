@@ -1,28 +1,27 @@
 openapi: 3.0.3
 info:
-  title: Status Management APIs
+  title: Driver's Status Management APIs
   description: Status Management APIs
   version: 1.0.0
 servers:
   - url: 'http://localhost:8080/drivers/v1'
+security:
+  - BearerAuth: [ ]
+components:
+  securitySchemes:
+    BearerAuth:
+      $ref: './securitySchemes/BearerAuth.yaml'
 
 paths:
   /availability:
     post:
       summary: "Driver's availability status"
       description: "Authenticated drivers will be able to update whether they are available to accept rides or not."
-      security:
-        - BearerAuth: [ ]
       requestBody:
         content:
           application/json:
             schema:
-              type: object
-              required:
-                - status
-              properties:
-                status:
-                  type: boolean
+              $ref: './schemas/driver/DriverAvailabilityStatusUpdateRequest.yaml'
       responses:
         200:
           description: "Driver's availability status successfully updated"
@@ -33,19 +32,17 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ClientErrorResponse'
+                $ref: './schemas/errors/ClientErrorResponse.yaml'
 
   /location:
     post:
       summary: "Update driver's current location"
       description: "Authenticated drivers will be able to update their current location."
-      security:
-        - BearerAuth: [ ]
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Location'
+              $ref: './schemas/location/LocationUpdateRequest.yaml'
       responses:
         200:
           description: "Driver's location updated"
@@ -56,62 +53,30 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ClientErrorResponse'
+                $ref: './schemas/errors/ClientErrorResponse.yaml'
 
   /location/{driver_id}:
     get:
       summary: "Get driver's current location"
       description: "Other services can consume this api to get the Driver's latest location. It can only be accessed by other service."
-      security:
-        - BearerAuth: [ ]
       parameters:
-        - in: path
-          name: driver_id
-          required: true
-          schema:
-            type: string
+        - $ref: './parameters/PathParamDriver.yaml'
       responses:
         200:
           description: "Driver's location fetched"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Location'
+                $ref: './schemas/location/Location.yaml'
         400:
           description: "Invalid request or missing fields"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ClientErrorResponse'
+                $ref: './schemas/errors/ClientErrorResponse.yaml'
         404:
           description: "Driver is unavailable"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ClientErrorResponse'
-
-components:
-  securitySchemes:
-    BearerAuth:
-      type: http
-      scheme: bearer
-
-  schemas:
-    Location:
-      type: object
-      description: 'Location object'
-      properties:
-        latitude:
-          type: number
-          format: double
-        longitude:
-          type: number
-          format: double
-
-    ClientErrorResponse:
-      type: object
-      description: 'Invalid Request'
-      properties:
-        message:
-          type: string
-
+                $ref: './schemas/errors/ClientErrorResponse.yaml'

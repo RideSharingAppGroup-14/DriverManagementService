@@ -1,0 +1,13 @@
+type: object
+description: "Rider Details"
+properties:
+  rider_id:
+    type: string
+    nullable: true
+    description: "Rider id is optional."
+  first_name:
+    type: string
+  last_name:
+    type: string
+  phone:
+    type: string

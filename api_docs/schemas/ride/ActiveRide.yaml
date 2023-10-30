@@ -1,0 +1,17 @@
+type: object
+description: "Active Ride"
+properties:
+  ride_id:
+    type: string
+  distance:
+    type: number
+    format: double
+  pickup:
+    type: object
+    $ref: "RidePlaceDetails.yaml"
+  dropoff:
+    type: object
+    $ref: "RidePlaceDetails.yaml"
+  rider:
+    type: object
+    $ref: 'Rider.yaml'

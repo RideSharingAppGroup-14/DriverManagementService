@@ -1,0 +1,5 @@
+in: path
+name: driver_id
+required: true
+schema:
+  type: string

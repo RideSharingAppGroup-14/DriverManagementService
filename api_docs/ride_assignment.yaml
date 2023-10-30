@@ -1,37 +1,27 @@
 openapi: 3.0.3
 info:
-  title: Ride APIs for Driver
+  title: Ride Assignment APIs for Driver
   description: Ride APIs for Driver
   version: 1.0.0
 servers:
   - url: 'http://localhost:8080/drivers/v1'
+security:
+  - BearerAuth: [ ]
+components:
+  securitySchemes:
+    BearerAuth:
+      $ref: './securitySchemes/BearerAuth.yaml'
 
 paths:
-  /rides/notify:
+  /ride/notify:
     post:
       summary: "Notify all the nearby riders"
       description: "This should be called only by RideManagement Service. It will return the response as Accepted if there are any drivers within a range of 5 km radius."
-      security:
-        - BearerAuth: [ ]
       requestBody:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                ride_id:
-                  type: string
-                latitude:
-                  type: number
-                  format: double
-                  description: "Pickup location latitude"
-                longitude:
-                  type: number
-                  format: double
-                  description: "Pickup location longitude"
-                city_id:
-                  type: integer
-                  description: "City id for for the pickup location"
+              $ref: './schemas/ride/RideRequest.yaml'
       responses:
         202:
           description: "Request Accepted"
@@ -42,17 +32,15 @@ paths:
           content:
             { }
 
-  /rides/acceptance:
+  /ride/acceptance:
     post:
       summary: "Accept/Reject Ride Request"
       description: "Authenticated drivers who were notified about the ride can accept or reject the ride request."
-      security:
-        - BearerAuth: [ ]
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/RideAcceptance'
+              $ref: './schemas/ride/RideAcceptanceRequest.yaml'
       responses:
         200:
           description: "Driver will accept or reject the ride"
@@ -63,31 +51,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ClientErrorResponse'
+                $ref: './schemas/errors/ClientErrorResponse.yaml'
         410:
           description: "Ride request no longer exists as rider might have cancelled"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ClientErrorResponse'
-
-components:
-  securitySchemes:
-    BearerAuth:
-      type: http
-      scheme: bearer
-
-  schemas:
-    RideAcceptance:
-      type: object
-      properties:
-        ride_id:
-          type: string
-        accepted:
-          type: boolean
-    ClientErrorResponse:
-      type: object
-      description: 'Invalid Request'
-      properties:
-        message:
-          type: string
+                $ref: './schemas/errors/ClientErrorResponse.yaml'

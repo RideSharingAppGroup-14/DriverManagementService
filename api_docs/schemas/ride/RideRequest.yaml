@@ -1,0 +1,15 @@
+type: object
+properties:
+  ride_id:
+    type: string
+  latitude:
+    type: number
+    format: double
+    description: "Pickup location latitude"
+  longitude:
+    type: number
+    format: double
+    description: "Pickup location longitude"
+  city_id:
+    type: integer
+    description: "City id for for the pickup location"

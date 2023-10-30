@@ -1,0 +1,12 @@
+allOf:
+  - $ref: '../driver/BaseDriverRequest.yaml'
+type: object
+properties:
+  ride_id:
+    type: string
+  latitude:
+    type: number
+    format: double
+  longitude:
+    type: number
+    format: double

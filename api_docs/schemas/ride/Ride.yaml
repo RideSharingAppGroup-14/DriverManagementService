@@ -1,0 +1,26 @@
+type: object
+description: "Ride Details"
+properties:
+  ride_id:
+    type: string
+  amount:
+    type: number
+    format: float
+  distance:
+    type: number
+    format: float
+  duration:
+    type: integer
+    description: "Duration in minutes"
+  status:
+    type: string
+    description: 'active/completed/cancelled'
+  pickup:
+    type: object
+    $ref: "RidePlaceDetails.yaml"
+  dropoff:
+    type: object
+    $ref: "RidePlaceDetails.yaml"
+  rider:
+    type: object
+    $ref: "Rider.yaml"

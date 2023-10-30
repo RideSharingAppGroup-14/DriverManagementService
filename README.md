@@ -24,6 +24,7 @@ It exposes APIs for the following functionalities:
    2. *Start Active Ride*
    3. *End Active Ride*
    4. *Cancel Active Ride*
+   5. *Update Location for Active Ride*
 5. [**Ride History**](api_docs/ride_history.yaml)
    1. *View Ride History*
 6. [**Driver Earnings**](api_docs/driver_earnings.yaml)

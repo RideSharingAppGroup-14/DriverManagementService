@@ -5,15 +5,20 @@ info:
   version: 1.0.0
 servers:
   - url: 'http://localhost:8080/drivers/v1'
+security:
+  - BearerAuth: [ ]
+components:
+  securitySchemes:
+    BearerAuth:
+      $ref: './securitySchemes/BearerAuth.yaml'
 
 paths:
-  /rides:
+  /rides/{driver_id}:
     get:
       summary: "Ride History of the Driver"
       description: "Authenticated drivers will be able to view all the history of their rides."
-      security:
-        - BearerAuth: [ ]
       parameters:
+        - $ref: './parameters/PathParamDriver.yaml'
         - in: query
           name: offset
           schema:
@@ -30,102 +35,8 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RideHistory'
+                $ref: './schemas/ride/RideHistory.yaml'
         404:
           description: "No rides found"
           content:
             { }
-
-components:
-  securitySchemes:
-    BearerAuth:
-      type: http
-      scheme: bearer
-
-  schemas:
-    RideHistory:
-      type: object
-      properties:
-        metadata:
-          type: object
-          $ref: '#/components/schemas/RideHistoryMetadata'
-        rides:
-          type: array
-          items:
-            $ref: '#/components/schemas/Ride'
-    RideHistoryMetadata:
-      type: object
-      description: "Ride History Metadata"
-      properties:
-        total:
-          type: integer
-          description: "Total number of rides"
-        offset:
-          type: integer
-          description: "Current offset value"
-        limit:
-          type: integer
-          description: "Limit provided"
-        count:
-          type: integer
-          description: "Number of rides fetched for the current offset"
-    Ride:
-      type: object
-      description: "Ride Details"
-      properties:
-        ride_id:
-          type: string
-        amount:
-          type: number
-          format: float
-        distance:
-          type: number
-          format: float
-        duration:
-          type: integer
-          description: "Duration in minutes"
-        status:
-          type: string
-          description: 'active/completed/cancelled'
-        pickup:
-          type: object
-          $ref: "#/components/schemas/RidePlaceDetails"
-        dropoff:
-          type: object
-          $ref: "#/components/schemas/RidePlaceDetails"
-        rider:
-          type: object
-          $ref: "#/components/schemas/Rider"
-    
-    RidePlaceDetails:
-      type: object
-      properties:
-        latitude:
-          type: number
-          format: double
-        longitude:
-          type: number
-          format: double
-        name:
-          type: string
-        timestamp:
-          type: string
-          format: date-time
-          description: "Timestamp in UTC in ISO 8601 format"
-
-    Rider:
-      type: object
-      properties:
-        rider_id:
-          type: string
-        first_name:
-          type: string
-        last_name:
-          type: string
-    
-    ClientErrorResponse:
-      type: object
-      description: 'Invalid Request'
-      properties:
-        message:
-          type: string

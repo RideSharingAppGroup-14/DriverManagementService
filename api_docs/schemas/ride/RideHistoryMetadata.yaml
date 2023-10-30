@@ -1,0 +1,15 @@
+type: object
+description: "Ride History Metadata"
+properties:
+  total:
+    type: integer
+    description: "Total number of rides"
+  offset:
+    type: integer
+    description: "Current offset value"
+  limit:
+    type: integer
+    description: "Limit provided"
+  count:
+    type: integer
+    description: "Number of rides fetched for the current offset"

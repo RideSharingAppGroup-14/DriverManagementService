@@ -1,0 +1,6 @@
+allOf:
+  - $ref: 'BaseDriverRequest.yaml'
+type: object
+properties:
+  status:
+    type: boolean

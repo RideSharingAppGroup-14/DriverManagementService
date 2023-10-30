@@ -1,0 +1,15 @@
+type: object
+properties:
+  latitude:
+    type: number
+    format: double
+  longitude:
+    type: number
+    format: double
+  name:
+    type: string
+  timestamp:
+    type: string
+    format: date-time
+    nullable: true
+    description: "Timestamp in UTC in ISO 8601 format. It is optional."

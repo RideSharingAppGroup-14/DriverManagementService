@@ -1,0 +1,8 @@
+type: object
+properties:
+  total_earnings:
+    type: number
+    format: float
+  current_balance:
+    type: number
+    format: float

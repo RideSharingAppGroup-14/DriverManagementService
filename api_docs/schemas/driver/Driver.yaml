@@ -1,0 +1,29 @@
+type: object
+properties:
+  driver_id:
+    type: string
+  first_name:
+    type: string
+  last_name:
+    type: string
+  phone:
+    type: string
+  email:
+    type: string
+  gender:
+    type: string
+  dob:
+    type: string
+  city:
+    type: string
+  state:
+    type: string
+  country:
+    type: string
+  is_approved:
+    type: boolean
+    default: true
+    description: "Currently, it will be auto-approved. So, value will always be true."
+  onboarded_on:
+    type: string
+    format: date-time

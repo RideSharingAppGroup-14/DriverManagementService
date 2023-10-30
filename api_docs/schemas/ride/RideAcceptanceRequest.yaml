@@ -1,0 +1,8 @@
+allOf:
+  - $ref: '../driver/BaseDriverRequest.yaml'
+type: object
+properties:
+  ride_id:
+    type: string
+  accepted:
+    type: boolean

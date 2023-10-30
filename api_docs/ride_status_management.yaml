@@ -5,37 +5,41 @@ info:
   version: 1.0.0
 servers:
   - url: 'http://localhost:8080/drivers/v1'
+security:
+  - BearerAuth: [ ]
+components:
+  securitySchemes:
+    BearerAuth:
+      $ref: './securitySchemes/BearerAuth.yaml'
 
 paths:
-  /rides/active:
+  /ride/active/{driver_id}:
     get:
       summary: "View Active Ride Details of a Driver"
       description: "Authenticated drivers will be able to view the details of the active ride they are assigned to."
-      security:
-        - BearerAuth: [ ]
+      parameters:
+        - $ref: './parameters/PathParamDriver.yaml'
       responses:
         200:
           description: "Returns active ride details of the driver"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Ride'
+                $ref: './schemas/ride/ActiveRide.yaml'
         404:
           description: "No active rides"
           content:
             { }
 
-  /rides/active/start:
+  /ride/active/start:
     put:
       summary: "Start Ride"
       description: "Authenticated drivers will be able to start the ride once they reach the pickup location."
-      security:
-        - BearerAuth: [ ]
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/StartRide'
+              $ref: './schemas/ride/StartRideRequest.yaml'
       responses:
         200:
           description: "Ride started"
@@ -46,19 +50,17 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ClientErrorResponse'
+                $ref: './schemas/errors/ClientErrorResponse.yaml'
 
-  /rides/active/end:
+  /ride/active/end:
     put:
       summary: "End Ride"
-      description: "Authenticated drivers will be able to end the ride once they reach the dropoff location."
-      security:
-        - BearerAuth: [ ]
+      description: "Authenticated drivers will be able to end the ride once they reach the dropoff location. It will also calculate the amount."
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/EndRide'
+              $ref: './schemas/ride/EndRideRequest.yaml'
       responses:
         200:
           description: "Ride ended"
@@ -69,19 +71,17 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ClientErrorResponse'
+                $ref: './schemas/errors/ClientErrorResponse.yaml'
 
-  /rides/active/cancel:
-    delete:
+  /ride/active/cancel:
+    put:
       summary: "Cancel Ride"
       description: "Authenticated drivers will be able to cancel the ride if the ride has not yet started."
-      security:
-        - BearerAuth: [ ]
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ActiveRideCancellation'
+              $ref: './schemas/ride/RideCancellationRequest.yaml'
       responses:
         200:
           description: "Ride cancelled. Driver can now accept rides"
@@ -92,92 +92,21 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ClientErrorResponse'
+                $ref: './schemas/errors/ClientErrorResponse.yaml'
 
-components:
-  securitySchemes:
-    BearerAuth:
-      type: http
-      scheme: bearer
-
-  schemas:
-    BaseRideUpdateRequest:
-      type: object
-      properties:
-        ride_id:
-          type: string
-        latitude:
-          type: number
-          format: double
-        longitude:
-          type: number
-          format: double
-
-    StartRide:
-      allOf:
-        - $ref: '#/components/schemas/BaseRideUpdateRequest'
-
-    EndRide:
-      allOf:
-        - $ref: '#/components/schemas/BaseRideUpdateRequest'
-
-    ActiveRideCancellation:
-      allOf:
-        - $ref: '#/components/schemas/BaseRideUpdateRequest'
-      type: object
-      properties:
-        reason:
-          type: string
-
-    Ride:
-      type: object
-      description: "Active Ride"
-      properties:
-        ride_id:
-          type: string
-        distance:
-          type: number
-          format: double
-        pickup:
-          type: object
-          $ref: "#/components/schemas/RidePlaceDetails"
-        dropoff:
-          type: object
-          $ref: "#/components/schemas/RidePlaceDetails"
-        rider:
-          type: object
-          $ref: '#/components/schemas/Rider'
-    
-    RidePlaceDetails:
-      type: object
-      properties:
-        latitude:
-          type: number
-          format: double
-        longitude:
-          type: number
-          format: double
-        name:
-          type: string
-        timestamp:
-          type: string
-          format: date-time
-          description: "Timestamp in UTC in ISO 8601 format"
-
-    Rider:
-      type: object
-      description: "Rider Details"
-      properties:
-        first_name:
-          type: string
-        last_name:
-          type: string
-        phone:
-          type: string
-
-    ClientErrorResponse:
-      type: object
-      description: 'Invalid Request'
-      properties:
-        message:
-          type: string
+  /ride/active/location:
+    put:
+      summary: "Update location for active ride"
+      description: "This API will be used from driver's device to keep updating the location of the ride."
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: './schemas/ride/RideLocationUpdateRequest.yaml'
+      responses:
+        200:
+          description: "Location updated."
+          content:
+            { }
+        400:
+          description: ""

@@ -1,0 +1,9 @@
+type: object
+properties:
+  metadata:
+    type: object
+    $ref: 'RideHistoryMetadata.yaml'
+  rides:
+    type: array
+    items:
+      $ref: 'Ride.yaml'
