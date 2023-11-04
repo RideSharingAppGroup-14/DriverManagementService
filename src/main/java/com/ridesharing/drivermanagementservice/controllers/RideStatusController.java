@@ -4,7 +4,9 @@ import com.ridesharing.drivermanagementservice.dtos.location.LocationDto;
 import com.ridesharing.drivermanagementservice.dtos.requests.CancelRideRequestDto;
 import com.ridesharing.drivermanagementservice.dtos.requests.RideLocationUpdateDto;
 import com.ridesharing.drivermanagementservice.dtos.ride.ActiveRideDto;
+import com.ridesharing.drivermanagementservice.exceptions.InvalidRideException;
 import com.ridesharing.drivermanagementservice.exceptions.NoActiveRideException;
+import com.ridesharing.drivermanagementservice.exceptions.RideAlreadyProcessedException;
 import com.ridesharing.drivermanagementservice.services.RideStatusService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,8 +29,9 @@ public class RideStatusController {
     @PutMapping("/start/{ride_id}")
     public ResponseEntity<?> startRide(
             @PathVariable("ride_id") String rideId,
-            @RequestBody LocationDto locationDto) {
-        return ResponseEntity.ok(locationDto);
+            @RequestBody LocationDto locationDto) throws RideAlreadyProcessedException, InvalidRideException {
+        rideStatusService.startRide(rideId, locationDto);
+        return ResponseEntity.ok().build();
     }
 
     @PutMapping("/end/{ride_id}")

@@ -33,7 +33,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler({
         MissingRequiredFieldsException.class,
-        RideAlreadyProcessedException.class
+        RideAlreadyProcessedException.class,
+        InvalidRideException.class
     })
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponseDto handleClientException(Exception ex) {
