@@ -17,6 +17,11 @@ public class ApiExceptionHandler {
                 httpStatus(HttpStatus.NOT_FOUND));
     }
 
+    @ExceptionHandler(MissingRequiredFieldsException.class)
+    public ResponseEntity<ErrorResponseDto> handleMissingFieldsException(MissingRequiredFieldsException ex) {
+        return ResponseEntity.badRequest()
+                .body(new ErrorResponseDto(ex.getMessage()));
+    }
     private HttpStatusCode httpStatus(HttpStatus httpStatus) {
         return HttpStatusCode.valueOf(httpStatus.value());
     }

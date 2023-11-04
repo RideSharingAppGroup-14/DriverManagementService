@@ -3,6 +3,7 @@ package com.ridesharing.drivermanagementservice.controllers;
 import com.ridesharing.drivermanagementservice.dtos.location.LocationDto;
 import com.ridesharing.drivermanagementservice.dtos.location.LocationTimestampDto;
 import com.ridesharing.drivermanagementservice.dtos.requests.AvailabilityStatusUpdateDto;
+import com.ridesharing.drivermanagementservice.services.DriverStatusManagementService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,11 +13,18 @@ import java.time.LocalDateTime;
 @RequestMapping("/v1")
 public class DriverStatusController {
 
+    private DriverStatusManagementService driverStatusManagementService;
+
+    public DriverStatusController(DriverStatusManagementService driverStatusManagementService) {
+        this.driverStatusManagementService = driverStatusManagementService;
+    }
+
     @PostMapping("/availability/{driver_id}")
     public ResponseEntity<?> updateAvailability(
             @PathVariable("driver_id") String driverId,
             @RequestBody AvailabilityStatusUpdateDto availabilityStatusUpdateDto) {
-        return ResponseEntity.ok(availabilityStatusUpdateDto);
+        driverStatusManagementService.updateAvailability(driverId, availabilityStatusUpdateDto);
+        return ResponseEntity.ok().build();
     }
 
     @PutMapping("/location/{driver_id}")

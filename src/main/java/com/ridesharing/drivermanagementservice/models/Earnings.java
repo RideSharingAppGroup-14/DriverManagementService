@@ -8,10 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-public class Earnings extends BaseModel {
-
-    @Column(name = "driver_id")
-    private String driverId;
+public class Earnings extends BaseDriverModel {
 
     @Column(name = "total_earnings")
     private float totalEarnings;
