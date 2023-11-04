@@ -1,6 +1,7 @@
 package com.ridesharing.drivermanagementservice.services;
 
 import com.ridesharing.drivermanagementservice.constants.RideStatus;
+import com.ridesharing.drivermanagementservice.dtos.requests.RideAcceptanceRequestDto;
 import com.ridesharing.drivermanagementservice.dtos.requests.RidePlaceRequestDto;
 import com.ridesharing.drivermanagementservice.dtos.requests.RideRequestDto;
 import com.ridesharing.drivermanagementservice.exceptions.DriverNotFoundException;
@@ -15,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
@@ -29,6 +31,9 @@ public class RideAssignmentServiceImpl implements RideAssignmentService {
 
     @Value("${search.radius.in-km}")
     private Integer searchRadiusInKm;
+
+    @Value("${ride.request.expiry.in-minutes}")
+    private Integer rideRequestExpiryInMinutes;
 
     @Override
     public void rideRequestNotification(RideRequestDto rideRequestDto)
@@ -89,5 +94,30 @@ public class RideAssignmentServiceImpl implements RideAssignmentService {
         }
 
         // Notify Drivers
+    }
+
+    @Override
+    public void rideAcceptance(String driverId, RideAcceptanceRequestDto rideAcceptanceRequestDto)
+            throws RideAlreadyProcessedException {
+        Ride ride = rideRepository.findByRideId(rideAcceptanceRequestDto.getRideId())
+                .orElse(new Ride());
+        if (RideStatus.EXPIRED.getValue().equals(ride.getStatus())) {
+            throw new RideAlreadyProcessedException("This request has expired");
+        } else if (!RideStatus.CREATED.getValue().equals(ride.getStatus())
+            && !RideStatus.PROCESSING.getValue().equals(ride.getStatus())) {
+            throw new RideAlreadyProcessedException("This ride has already been processed");
+        } else {
+            long durationInMinutes = Duration.between(ride.getUpdatedAt(), Instant.now()).toMinutes();
+            if (durationInMinutes > rideRequestExpiryInMinutes) {
+                ride.setStatus(RideStatus.EXPIRED.getValue());
+                rideRepository.save(ride);
+                throw new RideAlreadyProcessedException("This request has expired");
+            }
+            if (rideAcceptanceRequestDto.isAccepted()) {
+                ride.setDriverId(driverId);
+                ride.setStatus(RideStatus.ASSIGNED.getValue());
+                rideRepository.save(ride);
+            }
+        }
     }
 }

@@ -29,7 +29,8 @@ public class RideAssignmentController {
     @PostMapping("/acceptance/{driver_id}")
     public ResponseEntity<?> rideAcceptance(
             @PathVariable("driver_id") String driverId,
-            @RequestBody RideAcceptanceRequestDto rideAcceptanceRequestDto) {
-        return ResponseEntity.ok(rideAcceptanceRequestDto);
+            @RequestBody RideAcceptanceRequestDto rideAcceptanceRequestDto) throws RideAlreadyProcessedException {
+        rideAssignmentService.rideAcceptance(driverId, rideAcceptanceRequestDto);
+        return ResponseEntity.ok().build();
     }
 }
