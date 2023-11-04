@@ -31,7 +31,8 @@ public class DriverStatusController {
     public ResponseEntity<?> updateLocation(
             @PathVariable("driver_id") String driverId,
             @RequestBody LocationDto locationDto) {
-        return ResponseEntity.ok(locationDto);
+        driverStatusManagementService.updateLocation(driverId, locationDto);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/location/{driver_id}")

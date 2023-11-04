@@ -6,4 +6,6 @@ import com.ridesharing.drivermanagementservice.dtos.requests.AvailabilityStatusU
 public interface DriverStatusManagementService {
 
     void updateAvailability(String driverId, AvailabilityStatusUpdateDto availabilityStatusUpdateDto);
+
+    void updateLocation(String driverId, LocationDto locationDto);
 }
