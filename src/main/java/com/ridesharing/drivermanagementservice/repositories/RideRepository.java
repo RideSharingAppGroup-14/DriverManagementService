@@ -1,13 +1,13 @@
 package com.ridesharing.drivermanagementservice.repositories;
 
-import com.ridesharing.drivermanagementservice.models.Location;
+import com.ridesharing.drivermanagementservice.models.Ride;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 @Repository
-public interface LocationRepository extends JpaRepository<Location, Long> {
+public interface RideRepository extends JpaRepository<Ride, Long> {
 
-    Optional<Location> findByDriverId(String driverId);
+    Optional<Ride> findByRideId(String rideId);
 }

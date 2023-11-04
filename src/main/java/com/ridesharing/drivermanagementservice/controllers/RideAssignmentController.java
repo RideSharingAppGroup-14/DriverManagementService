@@ -2,7 +2,10 @@ package com.ridesharing.drivermanagementservice.controllers;
 
 import com.ridesharing.drivermanagementservice.dtos.requests.RideAcceptanceRequestDto;
 import com.ridesharing.drivermanagementservice.dtos.requests.RideRequestDto;
-import org.springframework.http.HttpStatus;
+import com.ridesharing.drivermanagementservice.exceptions.DriverNotFoundException;
+import com.ridesharing.drivermanagementservice.exceptions.RideAlreadyProcessedException;
+import com.ridesharing.drivermanagementservice.exceptions.ServiceNotAvailableException;
+import com.ridesharing.drivermanagementservice.services.RideAssignmentService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,9 +13,17 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/v1/ride")
 public class RideAssignmentController {
 
+    private final RideAssignmentService rideAssignmentService;
+
+    public RideAssignmentController(RideAssignmentService rideAssignmentService) {
+        this.rideAssignmentService = rideAssignmentService;
+    }
+
     @PostMapping("/assignment")
-    public ResponseEntity<?> rideRequestNotification(@RequestBody RideRequestDto rideRequestDto) {
-        return new ResponseEntity<>(rideRequestDto, HttpStatus.ACCEPTED);
+    public ResponseEntity<?> rideRequestNotification(@RequestBody RideRequestDto rideRequestDto)
+            throws ServiceNotAvailableException, DriverNotFoundException, RideAlreadyProcessedException {
+        rideAssignmentService.rideRequestNotification(rideRequestDto);
+        return ResponseEntity.accepted().build();
     }
 
     @PostMapping("/acceptance/{driver_id}")

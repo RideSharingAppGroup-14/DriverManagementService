@@ -5,19 +5,21 @@ import com.ridesharing.drivermanagementservice.dtos.location.LocationTimestampDt
 import com.ridesharing.drivermanagementservice.dtos.requests.AvailabilityStatusUpdateDto;
 import com.ridesharing.drivermanagementservice.exceptions.LocationNotFoundException;
 import com.ridesharing.drivermanagementservice.exceptions.MissingRequiredFieldsException;
-import com.ridesharing.drivermanagementservice.models.Availability;
-import com.ridesharing.drivermanagementservice.models.Location;
-import com.ridesharing.drivermanagementservice.repositories.AvailabilityRepository;
-import com.ridesharing.drivermanagementservice.repositories.LocationRepository;
+import com.ridesharing.drivermanagementservice.models.City;
+import com.ridesharing.drivermanagementservice.models.DriverStatus;
+import com.ridesharing.drivermanagementservice.repositories.CityRepository;
+import com.ridesharing.drivermanagementservice.repositories.DriverStatusRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
 public class DriverStatusManagementServiceImpl implements DriverStatusManagementService {
 
-    private AvailabilityRepository availabilityRepository;
-    private LocationRepository locationRepository;
+    private DriverStatusRepository driverStatusRepository;
+    private CityRepository cityRepository;
 
     @Override
     public void updateAvailability(String driverId, AvailabilityStatusUpdateDto availabilityStatusUpdateDto) {
@@ -25,13 +27,13 @@ public class DriverStatusManagementServiceImpl implements DriverStatusManagement
             throw new MissingRequiredFieldsException("Status field is missing");
         }
 
-        Availability availability = availabilityRepository.findByDriverId(driverId)
-                .orElse(new Availability());
+        DriverStatus driverStatus = driverStatusRepository.findByDriverId(driverId)
+                .orElse(new DriverStatus());
 
-        availability.setStatus(availabilityStatusUpdateDto.getStatus());
-        availability.setDriverId(driverId);
+        driverStatus.setStatus(availabilityStatusUpdateDto.getStatus());
+        driverStatus.setDriverId(driverId);
 
-        availabilityRepository.save(availability);
+        driverStatusRepository.save(driverStatus);
     }
 
     @Override
@@ -41,25 +43,33 @@ public class DriverStatusManagementServiceImpl implements DriverStatusManagement
             throw new MissingRequiredFieldsException("Latitude/Longitude fields are missing");
         }
 
-        Location location = locationRepository.findByDriverId(driverId)
-                .orElse(new Location());
+        DriverStatus driverStatus = driverStatusRepository.findByDriverId(driverId)
+                .orElse(new DriverStatus());
 
-        location.setDriverId(driverId);
-        location.setLatitude(locationDto.getLatitude());
-        location.setLongitude(locationDto.getLongitude());
+        // Get city from coordinates
+        Optional<City> cityOptional = cityRepository.findByCoordinates(locationDto.getLatitude(), locationDto.getLongitude());
+        cityOptional.ifPresent(driverStatus::setCity);
 
-        locationRepository.save(location);
+        driverStatus.setDriverId(driverId);
+        driverStatus.setLatitude(locationDto.getLatitude());
+        driverStatus.setLongitude(locationDto.getLongitude());
+
+        driverStatusRepository.save(driverStatus);
     }
 
     @Override
     public LocationTimestampDto getLocation(String driverId) throws LocationNotFoundException {
-        Location location = locationRepository.findByDriverId(driverId)
+        DriverStatus driverStatus = driverStatusRepository.findByDriverId(driverId)
                 .orElseThrow(() -> new LocationNotFoundException("Location not found"));
 
+        if (driverStatus.getLatitude() == null || driverStatus.getLongitude() == null) {
+            throw new LocationNotFoundException("Location not found");
+        }
+
         LocationTimestampDto dto = new LocationTimestampDto();
-        dto.setLatitude(location.getLatitude());
-        dto.setLongitude(location.getLongitude());
-        dto.setTimestamp(location.getUpdatedAt());
+        dto.setLatitude(driverStatus.getLatitude());
+        dto.setLongitude(driverStatus.getLongitude());
+        dto.setTimestamp(driverStatus.getLocationUpdatedAt());
 
         return dto;
     }

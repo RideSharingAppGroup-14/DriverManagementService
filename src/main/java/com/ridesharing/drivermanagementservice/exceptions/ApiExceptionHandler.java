@@ -10,17 +10,27 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class ApiExceptionHandler {
 
     @ExceptionHandler({
-            EarningsNotFoundException.class,
-            LocationNotFoundException.class
+        EarningsNotFoundException.class,
+        LocationNotFoundException.class,
+        DriverNotFoundException.class
     })
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponseDto handleEarningsNotFound(Exception ex) {
+    public ErrorResponseDto handleNotFoundException(Exception ex) {
         return new ErrorResponseDto(ex.getMessage());
     }
 
-    @ExceptionHandler(MissingRequiredFieldsException.class)
+    @ExceptionHandler()
+    @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
+    public ErrorResponseDto handleServiceNotAvailable(ServiceNotAvailableException ex) {
+        return new ErrorResponseDto(ex.getMessage());
+    }
+
+    @ExceptionHandler({
+        MissingRequiredFieldsException.class,
+        RideAlreadyProcessedException.class
+    })
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponseDto handleMissingFieldsException(MissingRequiredFieldsException ex) {
+    public ErrorResponseDto handleClientException(Exception ex) {
         return new ErrorResponseDto(ex.getMessage());
     }
 

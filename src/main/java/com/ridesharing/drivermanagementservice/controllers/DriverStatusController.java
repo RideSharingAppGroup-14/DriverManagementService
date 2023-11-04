@@ -37,7 +37,8 @@ public class DriverStatusController {
     }
 
     @GetMapping("/location/{driver_id}")
-    public ResponseEntity<LocationTimestampDto> getLocation(@PathVariable("driver_id") String driverId) throws LocationNotFoundException {
+    public ResponseEntity<LocationTimestampDto> getLocation(@PathVariable("driver_id") String driverId)
+            throws LocationNotFoundException {
         return ResponseEntity.ok(driverStatusManagementService.getLocation(driverId));
     }
 }
