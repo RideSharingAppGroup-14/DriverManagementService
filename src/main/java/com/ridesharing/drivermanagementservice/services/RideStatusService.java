@@ -9,5 +9,9 @@ import com.ridesharing.drivermanagementservice.exceptions.RideAlreadyProcessedEx
 public interface RideStatusService {
     ActiveRideDto getActiveRide(String driverId) throws NoActiveRideException;
 
-    void startRide(String rideId, LocationDto locationDto) throws InvalidRideException, RideAlreadyProcessedException;
+    void startRide(String rideId, LocationDto locationDto)
+            throws InvalidRideException, RideAlreadyProcessedException;
+
+    void endRide(String rideId, LocationDto locationDto)
+            throws InvalidRideException, RideAlreadyProcessedException;
 }

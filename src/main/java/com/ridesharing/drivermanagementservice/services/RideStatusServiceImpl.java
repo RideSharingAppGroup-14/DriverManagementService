@@ -71,4 +71,23 @@ public class RideStatusServiceImpl implements RideStatusService {
         ride.setPickupTimestamp(Instant.now());
         rideRepository.save(ride);
     }
+
+    @Override
+    public void endRide(String rideId, LocationDto locationDto) throws InvalidRideException, RideAlreadyProcessedException {
+        Ride ride = rideRepository.findByRideId(rideId)
+                .orElseThrow(() -> new InvalidRideException("Invalid ride"));
+        if (RideStatus.ENDED.getValue().equals(ride.getStatus())) {
+            throw new RideAlreadyProcessedException("Ride already ended");
+        } else if (!RideStatus.STARTED.getValue().equals(ride.getStatus())) {
+            throw new InvalidRideException("Invalid ride");
+        } else if (locationDto.getLatitude() == null || locationDto.getLongitude() == null) {
+            throw new MissingRequiredFieldsException("Location details are missing");
+        }
+
+        ride.setStatus(RideStatus.ENDED.getValue());
+        ride.setDropoffLatitude(locationDto.getLatitude());
+        ride.setDropoffLongitude(locationDto.getLongitude());
+        ride.setDropoffTimestamp(Instant.now());
+        rideRepository.save(ride);
+    }
 }
