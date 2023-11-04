@@ -1,7 +1,9 @@
 package com.ridesharing.drivermanagementservice.services;
 
 import com.ridesharing.drivermanagementservice.dtos.location.LocationDto;
+import com.ridesharing.drivermanagementservice.dtos.location.LocationTimestampDto;
 import com.ridesharing.drivermanagementservice.dtos.requests.AvailabilityStatusUpdateDto;
+import com.ridesharing.drivermanagementservice.exceptions.LocationNotFoundException;
 import com.ridesharing.drivermanagementservice.exceptions.MissingRequiredFieldsException;
 import com.ridesharing.drivermanagementservice.models.Availability;
 import com.ridesharing.drivermanagementservice.models.Location;
@@ -47,5 +49,18 @@ public class DriverStatusManagementServiceImpl implements DriverStatusManagement
         location.setLongitude(locationDto.getLongitude());
 
         locationRepository.save(location);
+    }
+
+    @Override
+    public LocationTimestampDto getLocation(String driverId) throws LocationNotFoundException {
+        Location location = locationRepository.findByDriverId(driverId)
+                .orElseThrow(() -> new LocationNotFoundException("Location not found"));
+
+        LocationTimestampDto dto = new LocationTimestampDto();
+        dto.setLatitude(location.getLatitude());
+        dto.setLongitude(location.getLongitude());
+        dto.setTimestamp(location.getUpdatedAt());
+
+        return dto;
     }
 }

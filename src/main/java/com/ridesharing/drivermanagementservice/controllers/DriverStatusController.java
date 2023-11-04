@@ -3,6 +3,7 @@ package com.ridesharing.drivermanagementservice.controllers;
 import com.ridesharing.drivermanagementservice.dtos.location.LocationDto;
 import com.ridesharing.drivermanagementservice.dtos.location.LocationTimestampDto;
 import com.ridesharing.drivermanagementservice.dtos.requests.AvailabilityStatusUpdateDto;
+import com.ridesharing.drivermanagementservice.exceptions.LocationNotFoundException;
 import com.ridesharing.drivermanagementservice.services.DriverStatusManagementService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -36,11 +37,7 @@ public class DriverStatusController {
     }
 
     @GetMapping("/location/{driver_id}")
-    public ResponseEntity<LocationTimestampDto> getLocation(@PathVariable("driver_id") String driverId) {
-        LocationTimestampDto locationDto = new LocationTimestampDto();
-        locationDto.setLatitude(3.45);
-        locationDto.setLongitude(3.43);
-        locationDto.setTimestamp(LocalDateTime.now());
-        return ResponseEntity.ok(locationDto);
+    public ResponseEntity<LocationTimestampDto> getLocation(@PathVariable("driver_id") String driverId) throws LocationNotFoundException {
+        return ResponseEntity.ok(driverStatusManagementService.getLocation(driverId));
     }
 }

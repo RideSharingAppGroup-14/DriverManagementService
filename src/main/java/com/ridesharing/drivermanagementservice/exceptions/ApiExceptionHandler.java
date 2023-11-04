@@ -9,9 +9,12 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class ApiExceptionHandler {
 
-    @ExceptionHandler(EarningsNotFoundException.class)
+    @ExceptionHandler({
+            EarningsNotFoundException.class,
+            LocationNotFoundException.class
+    })
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponseDto handleEarningsNotFound(EarningsNotFoundException ex) {
+    public ErrorResponseDto handleEarningsNotFound(Exception ex) {
         return new ErrorResponseDto(ex.getMessage());
     }
 
