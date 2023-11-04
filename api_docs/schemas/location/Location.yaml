@@ -6,7 +6,3 @@ properties:
   longitude:
     type: number
     format: double
-  timestamp:
-    type: string
-    format: date-time
-    description: "Timestamp in UTC in ISO 8601 format."

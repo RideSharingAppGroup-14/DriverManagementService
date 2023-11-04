@@ -1,0 +1,5 @@
+in: path
+name: ride_id
+required: true
+schema:
+  type: string

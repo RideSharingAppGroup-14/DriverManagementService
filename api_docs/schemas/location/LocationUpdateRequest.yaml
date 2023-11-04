@@ -1,3 +1,0 @@
-allOf:
-  - $ref: '../driver/BaseDriverRequest.yaml'
-  - $ref: 'Location.yaml'

@@ -1,5 +1,3 @@
-allOf:
-  - $ref: 'BaseDriverRequest.yaml'
 type: object
 properties:
   phone:

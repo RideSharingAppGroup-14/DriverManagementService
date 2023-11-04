@@ -1,0 +1,8 @@
+allOf:
+  - $ref: 'Location.yaml'
+type: object
+properties:
+  timestamp:
+    type: string
+    format: date-time
+    description: "Timestamp in UTC in ISO 8601 format."

@@ -26,15 +26,16 @@ paths:
             application/json:
               schema:
                 $ref: './schemas/driver/Driver.yaml'
-  /profile:
     put:
       summary: 'Update profile'
       description: "Authenticated drivers will be able to update some of the details in their profile."
+      parameters:
+        - $ref: './parameters/PathParamDriver.yaml'
       requestBody:
         content:
           application/json:
             schema:
-              $ref: './schemas/driver/DriverUpdateProfileRequest.yaml'
+              $ref: './schemas/requests/ProfileUpdate.yaml'
       responses:
         200:
           description: 'Successfully updated profile'

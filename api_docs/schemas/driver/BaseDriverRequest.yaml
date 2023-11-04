@@ -1,4 +1,0 @@
-type: object
-properties:
-  driver_id:
-    type: string

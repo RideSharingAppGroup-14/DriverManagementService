@@ -13,15 +13,17 @@ components:
       $ref: './securitySchemes/BearerAuth.yaml'
 
 paths:
-  /availability:
+  /availability/{driver_id}:
     post:
       summary: "Driver's availability status"
       description: "Authenticated drivers will be able to update whether they are available to accept rides or not."
+      parameters:
+        - $ref: './parameters/PathParamDriver.yaml'
       requestBody:
         content:
           application/json:
             schema:
-              $ref: './schemas/driver/DriverAvailabilityStatusUpdateRequest.yaml'
+              $ref: './schemas/requests/AvailabilityStatus.yaml'
       responses:
         200:
           description: "Driver's availability status successfully updated"
@@ -34,15 +36,17 @@ paths:
               schema:
                 $ref: './schemas/errors/ClientErrorResponse.yaml'
 
-  /location:
-    post:
+  /location/{driver_id}:
+    put:
       summary: "Update driver's current location"
       description: "Authenticated drivers will be able to update their current location."
+      parameters:
+        - $ref: './parameters/PathParamDriver.yaml'
       requestBody:
         content:
           application/json:
             schema:
-              $ref: './schemas/location/LocationUpdateRequest.yaml'
+              $ref: './schemas/location/Location.yaml'
       responses:
         200:
           description: "Driver's location updated"
@@ -55,7 +59,6 @@ paths:
               schema:
                 $ref: './schemas/errors/ClientErrorResponse.yaml'
 
-  /location/{driver_id}:
     get:
       summary: "Get driver's current location"
       description: "Other services can consume this api to get the Driver's latest location. It can only be accessed by other service."
@@ -67,7 +70,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: './schemas/location/Location.yaml'
+                $ref: './schemas/location/LocationTimestamp.yaml'
         400:
           description: "Invalid request or missing fields"
           content:

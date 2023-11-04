@@ -31,15 +31,17 @@ paths:
           content:
             { }
 
-  /ride/active/start:
+  /ride/active/start/{ride_id}:
     put:
       summary: "Start Ride"
       description: "Authenticated drivers will be able to start the ride once they reach the pickup location."
+      parameters:
+        - $ref: './parameters/PathParamRide.yaml'
       requestBody:
         content:
           application/json:
             schema:
-              $ref: './schemas/ride/StartRideRequest.yaml'
+              $ref: './schemas/location/Location.yaml'
       responses:
         200:
           description: "Ride started"
@@ -52,15 +54,17 @@ paths:
               schema:
                 $ref: './schemas/errors/ClientErrorResponse.yaml'
 
-  /ride/active/end:
+  /ride/active/end/{ride_id}:
     put:
       summary: "End Ride"
       description: "Authenticated drivers will be able to end the ride once they reach the dropoff location. It will also calculate the amount."
+      parameters:
+        - $ref: './parameters/PathParamRide.yaml'
       requestBody:
         content:
           application/json:
             schema:
-              $ref: './schemas/ride/EndRideRequest.yaml'
+              $ref: './schemas/location/Location.yaml'
       responses:
         200:
           description: "Ride ended"
@@ -73,15 +77,17 @@ paths:
               schema:
                 $ref: './schemas/errors/ClientErrorResponse.yaml'
 
-  /ride/active/cancel:
+  /ride/active/cancel/{ride_id}:
     put:
       summary: "Cancel Ride"
       description: "Authenticated drivers will be able to cancel the ride if the ride has not yet started."
+      parameters:
+        - $ref: './parameters/PathParamRide.yaml'
       requestBody:
         content:
           application/json:
             schema:
-              $ref: './schemas/ride/RideCancellationRequest.yaml'
+              $ref: './schemas/requests/CancelRide.yaml'
       responses:
         200:
           description: "Ride cancelled. Driver can now accept rides"
@@ -94,15 +100,35 @@ paths:
               schema:
                 $ref: './schemas/errors/ClientErrorResponse.yaml'
 
-  /ride/active/location:
+  /ride/active/completed/{ride_id}:
+    put:
+      summary: "Ride Completed"
+      description: "This API will be called from either Payment Service or from Ride Management Service"
+      parameters:
+        - $ref: './parameters/PathParamRide.yaml'
+      responses:
+        200:
+          description: "Ride completed"
+          content:
+            { }
+        400:
+          description: "Missing fields or Invalid values"
+          content:
+            application/json:
+              schema:
+                $ref: './schemas/errors/ClientErrorResponse.yaml'
+
+  /ride/active/location/{ride_id}:
     put:
       summary: "Update location for active ride"
       description: "This API will be used from driver's device to keep updating the location of the ride."
+      parameters:
+        - $ref: './parameters/PathParamRide.yaml'
       requestBody:
         content:
           application/json:
             schema:
-              $ref: './schemas/ride/RideLocationUpdateRequest.yaml'
+              $ref: './schemas/requests/RideLocation.yaml'
       responses:
         200:
           description: "Location updated."

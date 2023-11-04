@@ -1,5 +1,3 @@
-allOf:
-  - $ref: '../driver/BaseDriverRequest.yaml'
 type: object
 properties:
   ride_id:

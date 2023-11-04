@@ -1,14 +1,15 @@
 type: object
-description: "Active Ride"
 properties:
   ride_id:
     type: string
   pickup:
     type: object
-    $ref: "RidePlace.yaml"
+    $ref: "RidePlaceRequest.yaml"
   dropoff:
     type: object
-    $ref: "RidePlace.yaml"
+    $ref: "RidePlaceRequest.yaml"
   rider:
     type: object
-    $ref: 'Rider.yaml'
+    $ref: '../ride/Rider.yaml'
+  status:
+    type: string

@@ -1,5 +1,5 @@
 allOf:
-  - $ref: '../location/LocationTimestamp.yaml'
+  - $ref: '../location/Location.yaml'
 type: object
 properties:
   name:

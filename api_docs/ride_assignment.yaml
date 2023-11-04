@@ -13,7 +13,7 @@ components:
       $ref: './securitySchemes/BearerAuth.yaml'
 
 paths:
-  /ride/notify:
+  /ride/assignment:
     post:
       summary: "Notify all the nearby riders"
       description: "This should be called only by RideManagement Service. It will return the response as Accepted if there are any drivers within a range of 5 km radius."
@@ -21,7 +21,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: './schemas/ride/RideRequest.yaml'
+              $ref: './schemas/requests/RideRequest.yaml'
       responses:
         202:
           description: "Request Accepted"
@@ -32,15 +32,17 @@ paths:
           content:
             { }
 
-  /ride/acceptance:
+  /ride/acceptance/{driver_id}:
     post:
       summary: "Accept/Reject Ride Request"
       description: "Authenticated drivers who were notified about the ride can accept or reject the ride request."
+      parameters:
+        - $ref: './parameters/PathParamDriver.yaml'
       requestBody:
         content:
           application/json:
             schema:
-              $ref: './schemas/ride/RideAcceptanceRequest.yaml'
+              $ref: './schemas/requests/RideAcceptance.yaml'
       responses:
         200:
           description: "Driver will accept or reject the ride"

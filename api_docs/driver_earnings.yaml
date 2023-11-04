@@ -25,34 +25,8 @@ paths:
           content:
             application/json:
               schema:
-                $ref: './schemas/driver/Earning.yaml'
+                $ref: './schemas/driver/Earnings.yaml'
         404:
           description: "No earnings"
           content:
             { }
-
-  /earnings:
-    post:
-      summary: "Update Earnings"
-      description: "Update Earnings' details of the driver based on ride id. It should only be called by other service."
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                driver_id:
-                  type: string
-                ride_id:
-                  type: string
-      responses:
-        200:
-          description: "Amount added in the earnings"
-          content:
-            {}
-        400:
-          description: "Invalid request or field missing"
-          content:
-            application/json:
-              schema:
-                $ref: './schemas/errors/ClientErrorResponse.yaml'

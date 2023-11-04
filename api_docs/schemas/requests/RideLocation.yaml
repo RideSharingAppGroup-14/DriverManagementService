@@ -1,0 +1,6 @@
+type: object
+properties:
+  location:
+    type: array
+    items:
+      $ref: '../location/LocationTimestamp.yaml'
