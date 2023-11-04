@@ -4,6 +4,8 @@ import com.ridesharing.drivermanagementservice.dtos.location.LocationDto;
 import com.ridesharing.drivermanagementservice.dtos.requests.CancelRideRequestDto;
 import com.ridesharing.drivermanagementservice.dtos.requests.RideLocationUpdateDto;
 import com.ridesharing.drivermanagementservice.dtos.ride.ActiveRideDto;
+import com.ridesharing.drivermanagementservice.exceptions.NoActiveRideException;
+import com.ridesharing.drivermanagementservice.services.RideStatusService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,9 +13,15 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/v1/ride/active")
 public class RideStatusController {
 
+    private final RideStatusService rideStatusService;
+
+    public RideStatusController(RideStatusService rideStatusService) {
+        this.rideStatusService = rideStatusService;
+    }
+
     @GetMapping("/{driver_id}")
-    public ResponseEntity<ActiveRideDto> getActiveRide(@PathVariable("driver_id") String driverId) {
-        return ResponseEntity.ok(new ActiveRideDto());
+    public ResponseEntity<ActiveRideDto> getActiveRide(@PathVariable("driver_id") String driverId) throws NoActiveRideException {
+        return ResponseEntity.ok(rideStatusService.getActiveRide(driverId));
     }
 
     @PutMapping("/start/{ride_id}")

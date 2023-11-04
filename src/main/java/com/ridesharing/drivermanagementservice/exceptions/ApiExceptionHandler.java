@@ -12,7 +12,8 @@ public class ApiExceptionHandler {
     @ExceptionHandler({
         EarningsNotFoundException.class,
         LocationNotFoundException.class,
-        DriverNotFoundException.class
+        DriverNotFoundException.class,
+        NoActiveRideException.class
     })
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponseDto handleNotFoundException(Exception ex) {
