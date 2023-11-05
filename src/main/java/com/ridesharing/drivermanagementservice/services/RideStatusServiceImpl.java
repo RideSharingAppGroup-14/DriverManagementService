@@ -32,6 +32,11 @@ public class RideStatusServiceImpl implements RideStatusService {
 
     @Value("${price.per-km}")
     float pricePerKm;
+    private static final Set<String> VALID_RIDE_CANCELLABLE_STATUS = Set.of(
+        RideStatus.CREATED.getValue(),
+        RideStatus.PROCESSING.getValue(),
+        RideStatus.ASSIGNED.getValue()
+    );
 
     @Override
     public ActiveRideDto getActiveRide(String driverId) throws NoActiveRideException {
@@ -117,23 +122,22 @@ public class RideStatusServiceImpl implements RideStatusService {
 
     @Override
     public void cancelRide(String rideId, CancelRideRequestDto cancelRideRequestDto) throws InvalidRideException, RideAlreadyProcessedException {
-        Ride ride = rideRepository.findByRideId(rideId)
-                .orElseThrow(() -> new InvalidRideException("Invalid ride"));
-        Set<String> validStatus = Set.of(
-                RideStatus.CREATED.getValue(),
-                RideStatus.PROCESSING.getValue(),
-                RideStatus.ASSIGNED.getValue());
-        if (RideStatus.CANCELLED.getValue().equals(ride.getStatus())) {
-            throw new RideAlreadyProcessedException("Ride has already been cancelled");
-        } else if (!validStatus.contains(ride.getStatus())) {
-            throw new RideAlreadyProcessedException("Ride cannot be cancelled");
-        } else if (cancelRideRequestDto.getLatitude() == null || cancelRideRequestDto.getLongitude() == null) {
+        if (cancelRideRequestDto.getLatitude() == null || cancelRideRequestDto.getLongitude() == null) {
             throw new MissingRequiredFieldsException("Location details are missing");
         }
 
-        // TODO: Notify RideManagement for cancellation from Driver's end
-        ride.setStatus(RideStatus.CANCELLED.getValue());
-        rideRepository.save(ride);
+        Ride ride = rideRepository.findByRideId(rideId)
+                .orElseThrow(() -> new InvalidRideException("Invalid ride"));
+
+        if (VALID_RIDE_CANCELLABLE_STATUS.contains(ride.getStatus())) {
+            // TODO: Notify RideManagement for cancellation from Driver's end
+            ride.setStatus(RideStatus.CANCELLED.getValue());
+            rideRepository.save(ride);
+        } else if (RideStatus.CANCELLED.getValue().equals(ride.getStatus())) {
+            throw new RideAlreadyProcessedException("Ride has already been cancelled");
+        } else {
+            throw new RideAlreadyProcessedException("Ride cannot be cancelled");
+        }
     }
 
     @Override
@@ -157,5 +161,20 @@ public class RideStatusServiceImpl implements RideStatusService {
         } else if (!RideStatus.COMPLETED.getValue().equals(ride.getStatus())) {
             throw new InvalidRideException("Cannot mark this ride as completed");
         }
+    }
+
+    // This should be called when Rider cancels it
+    @Override
+    public void notifyRideCancelled(String rideId) throws InvalidRideException {
+        Ride ride = rideRepository.findByRideId(rideId)
+                .orElseThrow(() -> new InvalidRideException("Invalid ride"));
+
+        if (VALID_RIDE_CANCELLABLE_STATUS.contains(ride.getStatus())) {
+            ride.setStatus(RideStatus.CANCELLED.getValue());
+            rideRepository.save(ride);
+        } else if (!RideStatus.CANCELLED.getValue().equals(ride.getStatus())) {
+            throw new InvalidRideException("Cannot cancel the ride");
+        }
+        // No action if already cancelled
     }
 }

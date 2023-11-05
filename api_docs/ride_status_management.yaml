@@ -118,6 +118,24 @@ paths:
               schema:
                 $ref: './schemas/errors/ClientErrorResponse.yaml'
 
+  /ride/notify/cancelled/{ride_id}:
+    put:
+      summary: "Ride Cancelled Notify"
+      description: "This API will be called from Ride Management Service when Rider cancels it."
+      parameters:
+        - $ref: './parameters/PathParamRide.yaml'
+      responses:
+        200:
+          description: "Ride cancelled"
+          content:
+            { }
+        400:
+          description: "Missing fields or Invalid values"
+          content:
+            application/json:
+              schema:
+                $ref: './schemas/errors/ClientErrorResponse.yaml'
+
   /ride/active/location/{ride_id}:
     put:
       summary: "Update location for active ride"

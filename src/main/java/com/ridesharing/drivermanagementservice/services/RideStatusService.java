@@ -21,4 +21,5 @@ public interface RideStatusService {
 
     void notifyRideCompleted(String rideId) throws InvalidRideException;
 
+    void notifyRideCancelled(String rideId) throws InvalidRideException;
 }

@@ -56,6 +56,14 @@ public class RideStatusController {
         rideStatusService.notifyRideCompleted(rideId);
         return ResponseEntity.ok().build();
     }
+
+    @PutMapping("/notify/cancelled/{ride_id}")
+    public ResponseEntity<?> notifyRideCancelled(
+            @PathVariable("ride_id") String rideId) throws InvalidRideException {
+        rideStatusService.notifyRideCancelled(rideId);
+        return ResponseEntity.ok().build();
+    }
+
     @PutMapping("/location/{ride_id}")
     public ResponseEntity<?> updateRideLocation(
             @PathVariable("ride_id") String rideId,
