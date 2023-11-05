@@ -10,9 +10,12 @@ import com.ridesharing.drivermanagementservice.exceptions.InvalidRideException;
 import com.ridesharing.drivermanagementservice.exceptions.MissingRequiredFieldsException;
 import com.ridesharing.drivermanagementservice.exceptions.NoActiveRideException;
 import com.ridesharing.drivermanagementservice.exceptions.RideAlreadyProcessedException;
+import com.ridesharing.drivermanagementservice.models.Earnings;
 import com.ridesharing.drivermanagementservice.models.Ride;
+import com.ridesharing.drivermanagementservice.repositories.EarningsRepository;
 import com.ridesharing.drivermanagementservice.repositories.RideRepository;
 import com.ridesharing.drivermanagementservice.utils.CoordinatesUtils;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -21,16 +24,14 @@ import java.time.Instant;
 import java.util.Set;
 
 @Service
+@RequiredArgsConstructor
 public class RideStatusServiceImpl implements RideStatusService {
 
     private final RideRepository rideRepository;
+    private final EarningsRepository earningsRepository;
 
     @Value("${price.per-km}")
     float pricePerKm;
-
-    public RideStatusServiceImpl(RideRepository rideRepository) {
-        this.rideRepository = rideRepository;
-    }
 
     @Override
     public ActiveRideDto getActiveRide(String driverId) throws NoActiveRideException {
@@ -133,5 +134,28 @@ public class RideStatusServiceImpl implements RideStatusService {
         // TODO: Notify RideManagement for cancellation from Driver's end
         ride.setStatus(RideStatus.CANCELLED.getValue());
         rideRepository.save(ride);
+    }
+
+    @Override
+    public void notifyRideCompleted(String rideId) throws InvalidRideException {
+        Ride ride = rideRepository.findByRideId(rideId)
+                .orElseThrow(() -> new InvalidRideException("Invalid ride"));
+        if (RideStatus.ENDED.getValue().equals(ride.getStatus())) {
+            // TODO: Update ride status as completed in RideManagement Service
+
+            // Update status as completed
+            ride.setStatus(RideStatus.COMPLETED.getValue());
+            rideRepository.save(ride);
+
+            // Update earnings
+            Earnings earnings = earningsRepository.findByDriverId(ride.getDriverId())
+                    .orElse(new Earnings());
+            earnings.setDriverId(ride.getDriverId());
+            earnings.setTotalEarnings(earnings.getTotalEarnings() + ride.getAmount());
+            earnings.setCurrentBalance(earnings.getCurrentBalance() + ride.getAmount());
+            earningsRepository.save(earnings);
+        } else if (!RideStatus.COMPLETED.getValue().equals(ride.getStatus())) {
+            throw new InvalidRideException("Cannot mark this ride as completed");
+        }
     }
 }

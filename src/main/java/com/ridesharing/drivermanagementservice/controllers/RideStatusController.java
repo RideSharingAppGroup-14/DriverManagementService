@@ -12,7 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/v1/ride/active")
+@RequestMapping("/v1/ride")
 public class RideStatusController {
 
     private final RideStatusService rideStatusService;
@@ -21,12 +21,12 @@ public class RideStatusController {
         this.rideStatusService = rideStatusService;
     }
 
-    @GetMapping("/{driver_id}")
+    @GetMapping("/active/{driver_id}")
     public ResponseEntity<ActiveRideDto> getActiveRide(@PathVariable("driver_id") String driverId) throws NoActiveRideException {
         return ResponseEntity.ok(rideStatusService.getActiveRide(driverId));
     }
 
-    @PutMapping("/start/{ride_id}")
+    @PutMapping("/active/start/{ride_id}")
     public ResponseEntity<?> startRide(
             @PathVariable("ride_id") String rideId,
             @RequestBody LocationDto locationDto) throws RideAlreadyProcessedException, InvalidRideException {
@@ -34,7 +34,7 @@ public class RideStatusController {
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/end/{ride_id}")
+    @PutMapping("/active/end/{ride_id}")
     public ResponseEntity<?> endRide(
             @PathVariable("ride_id") String rideId,
             @RequestBody LocationDto locationDto) throws RideAlreadyProcessedException, InvalidRideException {
@@ -42,7 +42,7 @@ public class RideStatusController {
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/cancel/{ride_id}")
+    @PutMapping("/active/cancel/{ride_id}")
     public ResponseEntity<?> cancelRide(
             @PathVariable("ride_id") String rideId,
             @RequestBody CancelRideRequestDto cancelRideRequestDto) throws RideAlreadyProcessedException, InvalidRideException {
@@ -50,9 +50,10 @@ public class RideStatusController {
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/completed/{ride_id}")
+    @PutMapping("/notify/completed/{ride_id}")
     public ResponseEntity<?> notifyRideCompleted(
-            @PathVariable("ride_id") String rideId) {
+            @PathVariable("ride_id") String rideId) throws InvalidRideException {
+        rideStatusService.notifyRideCompleted(rideId);
         return ResponseEntity.ok().build();
     }
     @PutMapping("/location/{ride_id}")

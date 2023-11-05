@@ -100,7 +100,7 @@ paths:
               schema:
                 $ref: './schemas/errors/ClientErrorResponse.yaml'
 
-  /ride/active/completed/{ride_id}:
+  /ride/notify/completed/{ride_id}:
     put:
       summary: "Ride Completed"
       description: "This API will be called from either Payment Service or from Ride Management Service"

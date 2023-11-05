@@ -18,4 +18,7 @@ public interface RideStatusService {
 
     void cancelRide(String rideId, CancelRideRequestDto cancelRideRequestDto)
             throws InvalidRideException, RideAlreadyProcessedException;
+
+    void notifyRideCompleted(String rideId) throws InvalidRideException;
+
 }
