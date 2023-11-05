@@ -16,7 +16,7 @@ paths:
   /availability/{driver_id}:
     post:
       summary: "Driver's availability status"
-      description: "Authenticated drivers will be able to update whether they are available to accept rides or not."
+      description: "Authenticated drivers will be able to update whether they are available to accept rides or not. Location details are required if status is true."
       parameters:
         - $ref: './parameters/PathParamDriver.yaml'
       requestBody:

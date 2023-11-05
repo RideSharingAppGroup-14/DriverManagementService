@@ -1,3 +1,5 @@
+allOf:
+  - $ref: '../location/Location.yaml'
 type: object
 properties:
   status:

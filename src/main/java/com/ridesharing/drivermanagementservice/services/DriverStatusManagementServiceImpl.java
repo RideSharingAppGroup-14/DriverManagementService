@@ -30,6 +30,19 @@ public class DriverStatusManagementServiceImpl implements DriverStatusManagement
         DriverStatus driverStatus = driverStatusRepository.findByDriverId(driverId)
                 .orElse(new DriverStatus());
 
+        if (availabilityStatusUpdateDto.getStatus()) {
+            Double latitude = availabilityStatusUpdateDto.getLatitude();
+            Double longitude = availabilityStatusUpdateDto.getLongitude();
+            if (latitude == null || longitude == null) {
+                throw new MissingRequiredFieldsException("Latitude/Longitude are missing");
+            }
+            driverStatus.setLatitude(latitude);
+            driverStatus.setLongitude(longitude);
+
+            // Get city from coordinates
+            Optional<City> cityOptional = cityRepository.findByCoordinates(latitude, longitude);
+            cityOptional.ifPresent(driverStatus::setCity);
+        }
         driverStatus.setStatus(availabilityStatusUpdateDto.getStatus());
         driverStatus.setDriverId(driverId);
 
@@ -45,10 +58,6 @@ public class DriverStatusManagementServiceImpl implements DriverStatusManagement
 
         DriverStatus driverStatus = driverStatusRepository.findByDriverId(driverId)
                 .orElse(new DriverStatus());
-
-        // Get city from coordinates
-        Optional<City> cityOptional = cityRepository.findByCoordinates(locationDto.getLatitude(), locationDto.getLongitude());
-        cityOptional.ifPresent(driverStatus::setCity);
 
         driverStatus.setDriverId(driverId);
         driverStatus.setLatitude(locationDto.getLatitude());
