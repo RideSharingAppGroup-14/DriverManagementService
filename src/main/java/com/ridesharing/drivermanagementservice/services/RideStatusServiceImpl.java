@@ -2,6 +2,7 @@ package com.ridesharing.drivermanagementservice.services;
 
 import com.ridesharing.drivermanagementservice.constants.RideStatus;
 import com.ridesharing.drivermanagementservice.dtos.location.LocationDto;
+import com.ridesharing.drivermanagementservice.dtos.requests.CancelRideRequestDto;
 import com.ridesharing.drivermanagementservice.dtos.ride.ActiveRideDto;
 import com.ridesharing.drivermanagementservice.dtos.ride.RidePlaceDto;
 import com.ridesharing.drivermanagementservice.dtos.ride.RiderDto;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Set;
 
 @Service
 public class RideStatusServiceImpl implements RideStatusService {
@@ -110,5 +112,26 @@ public class RideStatusServiceImpl implements RideStatusService {
         ride.setDropoffTimestamp(currentTime);
         rideRepository.save(ride);
 
+    }
+
+    @Override
+    public void cancelRide(String rideId, CancelRideRequestDto cancelRideRequestDto) throws InvalidRideException, RideAlreadyProcessedException {
+        Ride ride = rideRepository.findByRideId(rideId)
+                .orElseThrow(() -> new InvalidRideException("Invalid ride"));
+        Set<String> validStatus = Set.of(
+                RideStatus.CREATED.getValue(),
+                RideStatus.PROCESSING.getValue(),
+                RideStatus.ASSIGNED.getValue());
+        if (RideStatus.CANCELLED.getValue().equals(ride.getStatus())) {
+            throw new RideAlreadyProcessedException("Ride has already been cancelled");
+        } else if (!validStatus.contains(ride.getStatus())) {
+            throw new RideAlreadyProcessedException("Ride cannot be cancelled");
+        } else if (cancelRideRequestDto.getLatitude() == null || cancelRideRequestDto.getLongitude() == null) {
+            throw new MissingRequiredFieldsException("Location details are missing");
+        }
+
+        // TODO: Notify RideManagement for cancellation from Driver's end
+        ride.setStatus(RideStatus.CANCELLED.getValue());
+        rideRepository.save(ride);
     }
 }

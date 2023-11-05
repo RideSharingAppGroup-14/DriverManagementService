@@ -45,8 +45,9 @@ public class RideStatusController {
     @PutMapping("/cancel/{ride_id}")
     public ResponseEntity<?> cancelRide(
             @PathVariable("ride_id") String rideId,
-            @RequestBody CancelRideRequestDto cancelRideRequestDto) {
-        return ResponseEntity.ok(cancelRideRequestDto);
+            @RequestBody CancelRideRequestDto cancelRideRequestDto) throws RideAlreadyProcessedException, InvalidRideException {
+        rideStatusService.cancelRide(rideId, cancelRideRequestDto);
+        return ResponseEntity.ok().build();
     }
 
     @PutMapping("/completed/{ride_id}")
