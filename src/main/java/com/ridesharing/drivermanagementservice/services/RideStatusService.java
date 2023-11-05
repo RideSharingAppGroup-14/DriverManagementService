@@ -2,6 +2,7 @@ package com.ridesharing.drivermanagementservice.services;
 
 import com.ridesharing.drivermanagementservice.dtos.location.LocationDto;
 import com.ridesharing.drivermanagementservice.dtos.requests.CancelRideRequestDto;
+import com.ridesharing.drivermanagementservice.dtos.requests.RideLocationUpdateDto;
 import com.ridesharing.drivermanagementservice.dtos.ride.ActiveRideDto;
 import com.ridesharing.drivermanagementservice.exceptions.InvalidRideException;
 import com.ridesharing.drivermanagementservice.exceptions.NoActiveRideException;
@@ -22,4 +23,8 @@ public interface RideStatusService {
     void notifyRideCompleted(String rideId) throws InvalidRideException;
 
     void notifyRideCancelled(String rideId) throws InvalidRideException;
+
+    void updateRideLocation(String rideId, RideLocationUpdateDto rideLocationUpdateDto)
+            throws InvalidRideException;
+
 }

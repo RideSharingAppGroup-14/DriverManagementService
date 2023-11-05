@@ -1,15 +1,19 @@
 package com.ridesharing.drivermanagementservice.models;
 
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
+import java.util.List;
 
 @Getter
 @Setter
 @Entity
+@Table(name = "Ride", uniqueConstraints = {
+        @UniqueConstraint(name = "uc_ride_rideid", columnNames = {"rideId"})
+})
 public class Ride extends BaseDriverModel {
     private String rideId;
     private String pickupAddress;
@@ -30,4 +34,7 @@ public class Ride extends BaseDriverModel {
 
     @UpdateTimestamp
     private Instant updatedAt;
+
+    @OneToMany(mappedBy = "ride")
+    List<RideLocation> locations;
 }

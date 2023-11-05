@@ -2,7 +2,9 @@ package com.ridesharing.drivermanagementservice.services;
 
 import com.ridesharing.drivermanagementservice.constants.RideStatus;
 import com.ridesharing.drivermanagementservice.dtos.location.LocationDto;
+import com.ridesharing.drivermanagementservice.dtos.location.LocationTimestampDto;
 import com.ridesharing.drivermanagementservice.dtos.requests.CancelRideRequestDto;
+import com.ridesharing.drivermanagementservice.dtos.requests.RideLocationUpdateDto;
 import com.ridesharing.drivermanagementservice.dtos.ride.ActiveRideDto;
 import com.ridesharing.drivermanagementservice.dtos.ride.RidePlaceDto;
 import com.ridesharing.drivermanagementservice.dtos.ride.RiderDto;
@@ -10,9 +12,13 @@ import com.ridesharing.drivermanagementservice.exceptions.InvalidRideException;
 import com.ridesharing.drivermanagementservice.exceptions.MissingRequiredFieldsException;
 import com.ridesharing.drivermanagementservice.exceptions.NoActiveRideException;
 import com.ridesharing.drivermanagementservice.exceptions.RideAlreadyProcessedException;
+import com.ridesharing.drivermanagementservice.models.DriverStatus;
 import com.ridesharing.drivermanagementservice.models.Earnings;
 import com.ridesharing.drivermanagementservice.models.Ride;
+import com.ridesharing.drivermanagementservice.models.RideLocation;
+import com.ridesharing.drivermanagementservice.repositories.DriverStatusRepository;
 import com.ridesharing.drivermanagementservice.repositories.EarningsRepository;
+import com.ridesharing.drivermanagementservice.repositories.RideLocationRepository;
 import com.ridesharing.drivermanagementservice.repositories.RideRepository;
 import com.ridesharing.drivermanagementservice.utils.CoordinatesUtils;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +27,9 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -29,9 +38,12 @@ public class RideStatusServiceImpl implements RideStatusService {
 
     private final RideRepository rideRepository;
     private final EarningsRepository earningsRepository;
+    private final RideLocationRepository rideLocationRepository;
+    private final DriverStatusRepository driverStatusRepository;
 
     @Value("${price.per-km}")
     float pricePerKm;
+
     private static final Set<String> VALID_RIDE_CANCELLABLE_STATUS = Set.of(
         RideStatus.CREATED.getValue(),
         RideStatus.PROCESSING.getValue(),
@@ -84,6 +96,12 @@ public class RideStatusServiceImpl implements RideStatusService {
         ride.setPickupLongitude(locationDto.getLongitude());
         ride.setPickupTimestamp(Instant.now());
         rideRepository.save(ride);
+
+        // Update pickup coordinates as the first ride location
+        updateRideLocation(locationDto, ride);
+
+        // Update driver's availability to false and coordinates as the latest driver's location
+        updateDriverStatus(ride, false, locationDto);
     }
 
     @Override
@@ -115,9 +133,14 @@ public class RideStatusServiceImpl implements RideStatusService {
         ride.setStatus(RideStatus.ENDED.getValue());
         ride.setDropoffLatitude(locationDto.getLatitude());
         ride.setDropoffLongitude(locationDto.getLongitude());
-        ride.setDropoffTimestamp(currentTime);
+        ride.setDropoffTimestamp(Instant.now());
         rideRepository.save(ride);
 
+        // Update dropoff coordinates as the last ride location
+        updateRideLocation(locationDto, ride);
+
+        // Update driver's availability to true and coordinates as the latest driver's location
+        updateDriverStatus(ride, true, locationDto);
     }
 
     @Override
@@ -176,5 +199,52 @@ public class RideStatusServiceImpl implements RideStatusService {
             throw new InvalidRideException("Cannot cancel the ride");
         }
         // No action if already cancelled
+    }
+
+    @Override
+    public void updateRideLocation(String rideId, RideLocationUpdateDto rideLocationUpdateDto) throws InvalidRideException {
+        Ride ride = rideRepository.findByRideId(rideId)
+                .orElseThrow(() -> new InvalidRideException("Invalid ride"));
+        if (RideStatus.STARTED.getValue().equals(ride.getStatus())) {
+            // Update ride location if status is started
+            if (rideLocationUpdateDto.getLocation() != null) {
+                RideLocation rideLocation;
+                List<RideLocation> rideLocationList = new ArrayList<>();
+                for (LocationTimestampDto location: rideLocationUpdateDto.getLocation()) {
+                    rideLocation = new RideLocation();
+                    rideLocation.setLatitude(location.getLatitude());
+                    rideLocation.setLongitude(location.getLongitude());
+                    rideLocation.setTimestamp(location.getTimestamp());
+                    rideLocation.setRide(ride);
+
+                    rideLocationList.add(rideLocation);
+                }
+
+                rideLocationRepository.saveAll(rideLocationList);
+            }
+
+        } else {
+            throw new InvalidRideException("Ride is not active");
+        }
+    }
+
+    private void updateRideLocation(LocationDto locationDto, Ride ride) {
+        RideLocation rideLocation = new RideLocation();
+        rideLocation.setLatitude(locationDto.getLatitude());
+        rideLocation.setLongitude(locationDto.getLongitude());
+        rideLocation.setTimestamp(Instant.now());
+        rideLocation.setRide(ride);
+        rideLocationRepository.save(rideLocation);
+    }
+
+    private void updateDriverStatus(Ride ride, boolean status, LocationDto locationDto) {
+        Optional<DriverStatus> driverStatusOptional = driverStatusRepository.findByDriverId(ride.getDriverId());
+        if (driverStatusOptional.isPresent()) {
+            DriverStatus driverStatus = driverStatusOptional.get();
+            driverStatus.setStatus(status);
+            driverStatus.setLatitude(locationDto.getLatitude());
+            driverStatus.setLongitude(locationDto.getLongitude());
+            driverStatusRepository.save(driverStatus);
+        }
     }
 }

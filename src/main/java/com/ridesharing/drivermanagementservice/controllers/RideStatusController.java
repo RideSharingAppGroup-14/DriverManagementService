@@ -64,10 +64,11 @@ public class RideStatusController {
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/location/{ride_id}")
+    @PutMapping("/active/location/{ride_id}")
     public ResponseEntity<?> updateRideLocation(
             @PathVariable("ride_id") String rideId,
-            @RequestBody RideLocationUpdateDto rideLocationUpdateDto) {
-        return ResponseEntity.ok(rideLocationUpdateDto);
+            @RequestBody RideLocationUpdateDto rideLocationUpdateDto) throws InvalidRideException {
+        rideStatusService.updateRideLocation(rideId, rideLocationUpdateDto);
+        return ResponseEntity.ok().build();
     }
 }
