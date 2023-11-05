@@ -24,7 +24,7 @@ public class Ride extends BaseDriverModel {
     private String riderLastName;
     private String riderPhone;
     private String status;
-    private Float distance;
+    private Double distance;
     private Float amount;
     private Integer duration;
 

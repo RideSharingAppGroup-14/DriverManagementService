@@ -11,14 +11,20 @@ import com.ridesharing.drivermanagementservice.exceptions.NoActiveRideException;
 import com.ridesharing.drivermanagementservice.exceptions.RideAlreadyProcessedException;
 import com.ridesharing.drivermanagementservice.models.Ride;
 import com.ridesharing.drivermanagementservice.repositories.RideRepository;
+import com.ridesharing.drivermanagementservice.utils.CoordinatesUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.Instant;
 
 @Service
 public class RideStatusServiceImpl implements RideStatusService {
 
     private final RideRepository rideRepository;
+
+    @Value("${price.per-km}")
+    float pricePerKm;
 
     public RideStatusServiceImpl(RideRepository rideRepository) {
         this.rideRepository = rideRepository;
@@ -84,10 +90,25 @@ public class RideStatusServiceImpl implements RideStatusService {
             throw new MissingRequiredFieldsException("Location details are missing");
         }
 
+        // TODO: Notify RideManagement Service
+
+        // Update status, distance, amount, duration
+        Instant currentTime = Instant.now();
+        double distance = CoordinatesUtils.calculateDistance(
+            ride.getPickupLatitude(), ride.getPickupLongitude(),
+            locationDto.getLatitude(), locationDto.getLongitude()
+        );
+        float amount = (float) distance * pricePerKm;
+        int duration = (int) Duration.between(ride.getPickupTimestamp(), currentTime).toMinutes();
+
+        ride.setDistance(distance);
+        ride.setAmount(amount);
+        ride.setDuration(duration);
         ride.setStatus(RideStatus.ENDED.getValue());
         ride.setDropoffLatitude(locationDto.getLatitude());
         ride.setDropoffLongitude(locationDto.getLongitude());
-        ride.setDropoffTimestamp(Instant.now());
+        ride.setDropoffTimestamp(currentTime);
         rideRepository.save(ride);
+
     }
 }
