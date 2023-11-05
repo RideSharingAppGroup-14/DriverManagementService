@@ -156,6 +156,8 @@ public class RideStatusServiceImpl implements RideStatusService {
             // TODO: Notify RideManagement for cancellation from Driver's end
             ride.setStatus(RideStatus.CANCELLED.getValue());
             rideRepository.save(ride);
+
+            updateDriverStatus(ride, true, cancelRideRequestDto);
         } else if (RideStatus.CANCELLED.getValue().equals(ride.getStatus())) {
             throw new RideAlreadyProcessedException("Ride has already been cancelled");
         } else {
@@ -195,6 +197,9 @@ public class RideStatusServiceImpl implements RideStatusService {
         if (VALID_RIDE_CANCELLABLE_STATUS.contains(ride.getStatus())) {
             ride.setStatus(RideStatus.CANCELLED.getValue());
             rideRepository.save(ride);
+
+            // Update driver's availability to true
+            updateDriverStatus(ride, true, null);
         } else if (!RideStatus.CANCELLED.getValue().equals(ride.getStatus())) {
             throw new InvalidRideException("Cannot cancel the ride");
         }
@@ -242,8 +247,10 @@ public class RideStatusServiceImpl implements RideStatusService {
         if (driverStatusOptional.isPresent()) {
             DriverStatus driverStatus = driverStatusOptional.get();
             driverStatus.setStatus(status);
-            driverStatus.setLatitude(locationDto.getLatitude());
-            driverStatus.setLongitude(locationDto.getLongitude());
+            if (locationDto != null) {
+                driverStatus.setLatitude(locationDto.getLatitude());
+                driverStatus.setLongitude(locationDto.getLongitude());
+            }
             driverStatusRepository.save(driverStatus);
         }
     }

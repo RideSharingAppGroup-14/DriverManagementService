@@ -11,6 +11,7 @@ import com.ridesharing.drivermanagementservice.models.City;
 import com.ridesharing.drivermanagementservice.models.DriverStatus;
 import com.ridesharing.drivermanagementservice.models.Ride;
 import com.ridesharing.drivermanagementservice.repositories.CityRepository;
+import com.ridesharing.drivermanagementservice.repositories.DriverStatusRepository;
 import com.ridesharing.drivermanagementservice.repositories.RideRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,6 +29,7 @@ public class RideAssignmentServiceImpl implements RideAssignmentService {
     private final RideRepository rideRepository;
     private final CityRepository cityRepository;
     private final DriversSearchStrategy driversSearchStrategy;
+    private final DriverStatusRepository driverStatusRepository;
 
     @Value("${search.radius.in-km}")
     private Integer searchRadiusInKm;
@@ -117,6 +119,14 @@ public class RideAssignmentServiceImpl implements RideAssignmentService {
                 ride.setDriverId(driverId);
                 ride.setStatus(RideStatus.ASSIGNED.getValue());
                 rideRepository.save(ride);
+
+                // Update driver's availability to false and coordinates as the latest driver's location
+                Optional<DriverStatus> driverStatusOptional = driverStatusRepository.findByDriverId(ride.getDriverId());
+                if (driverStatusOptional.isPresent()) {
+                    DriverStatus driverStatus = driverStatusOptional.get();
+                    driverStatus.setStatus(false);
+                    driverStatusRepository.save(driverStatus);
+                }
             }
         }
     }
