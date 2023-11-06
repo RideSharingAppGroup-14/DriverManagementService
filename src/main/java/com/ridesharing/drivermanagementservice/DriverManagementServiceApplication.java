@@ -19,11 +19,17 @@ public class DriverManagementServiceApplication implements CommandLineRunner {
 //	CityRepository cityRepository;
 
 //	@Autowired
-//	RideRepository rideRepository;
+// 	RideRepository rideRepository;
+
+// 	@Autowired
+//	DriverProfileRepository profileRepository;
 
 	@Override
 	public void run(String... args) throws Exception {
 //		createRides();
+//		createProfile();
+//		addCityToStartService();
+
 //		Earnings earnings = new Earnings();
 //		earnings.setDriverId(UUID.randomUUID().toString());
 //		earnings.setTotalEarnings(1000);
@@ -31,6 +37,9 @@ public class DriverManagementServiceApplication implements CommandLineRunner {
 //
 //		earningsRepository.save(earnings);
 
+	}
+
+//	private void addCityToStartService() {
 //		City city = new City();
 //		city.setCity("Bangalore");
 //		city.setState("Karnataka");
@@ -41,7 +50,7 @@ public class DriverManagementServiceApplication implements CommandLineRunner {
 //		city.setMaxLongitude(77.882681);
 //
 //		cityRepository.save(city);
-	}
+//	}
 
 //	private void createRides() {
 //		Random random = new Random();
@@ -69,5 +78,21 @@ public class DriverManagementServiceApplication implements CommandLineRunner {
 //			rides.add(ride);
 //		}
 //		rideRepository.saveAll(rides);
+//	}
+
+//	private void createProfile() {
+//		DriverProfile profile = new DriverProfile();
+//		profile.setDriverId("d519c53b-34b0-4c94-b3d6-feeafe606d81");
+//		profile.setFirstName("Dave");
+//		profile.setLastName("Johnson");
+//		profile.setPhone("9876543210");
+//		profile.setEmail("dave.johnson@gmail.com");
+//		profile.setGender("Male");
+//		profile.setDob(LocalDate.of(1980, Month.FEBRUARY, 29));
+//		profile.setApproved(true);
+//		profile.setCity("Bangalore");
+//		profile.setState("Karnataka");
+//		profile.setCountry("India");
+//		profileRepository.save(profile);
 //	}
 }

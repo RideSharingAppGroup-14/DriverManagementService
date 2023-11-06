@@ -35,7 +35,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler({
         MissingRequiredFieldsException.class,
         RideAlreadyProcessedException.class,
-        InvalidRideException.class
+        InvalidRideException.class,
+        InvalidDriverException.class
     })
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponseDto handleClientException(Exception ex) {
