@@ -18,7 +18,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         EarningsNotFoundException.class,
         LocationNotFoundException.class,
         DriverNotFoundException.class,
-        NoActiveRideException.class
+        NoActiveRideException.class,
+        RidesNotFoundException.class
     })
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponseDto handleNotFoundException(Exception ex) {
@@ -52,7 +53,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                                                              Object body, HttpHeaders headers, HttpStatusCode statusCode,
                                                              WebRequest request) {
         HttpStatus httpStatus = HttpStatus.valueOf(statusCode.value());
-        return new ResponseEntity<>(new ErrorResponseDto("An internal error occurred."),
+        return new ResponseEntity<>(new ErrorResponseDto(ex.getMessage()),
                 httpStatus);
     }
 }

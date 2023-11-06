@@ -18,8 +18,12 @@ public class DriverManagementServiceApplication implements CommandLineRunner {
 //	@Autowired
 //	CityRepository cityRepository;
 
+//	@Autowired
+//	RideRepository rideRepository;
+
 	@Override
 	public void run(String... args) throws Exception {
+//		createRides();
 //		Earnings earnings = new Earnings();
 //		earnings.setDriverId(UUID.randomUUID().toString());
 //		earnings.setTotalEarnings(1000);
@@ -38,4 +42,32 @@ public class DriverManagementServiceApplication implements CommandLineRunner {
 //
 //		cityRepository.save(city);
 	}
+
+//	private void createRides() {
+//		Random random = new Random();
+//		List<Ride> rides = new ArrayList<>();
+//		for (int i = 0; i < 101; i++) {
+//			Ride ride = new Ride();
+//			ride.setRideId(UUID.randomUUID().toString());
+//			ride.setDriverId("d519c53b-34b0-4c94-b3d6-feeafe606d81");
+//			ride.setDuration(random.nextInt(60));
+//			ride.setStatus(RideStatus.COMPLETED.getValue());
+//			ride.setDistance(random.nextDouble(50));
+//			ride.setAmount(ride.getDistance().floatValue());
+//			ride.setPickupAddress("Subramanyapura");
+//			ride.setPickupLatitude(12.892007);
+//			ride.setPickupLongitude(77.527817);
+//			ride.setPickupTimestamp(Instant.now().minusSeconds(random.nextInt(500)));
+//			ride.setDropoffAddress("BTM Layout");
+//			ride.setDropoffLatitude(12.916576);
+//			ride.setDropoffLongitude(77.610116);
+//			ride.setDropoffTimestamp(Instant.now().plusSeconds(random.nextInt(100)));
+//			ride.setRiderFirstName("Binay");
+//			ride.setRiderLastName("Prakash");
+//			ride.setRiderPhone("9999988888");
+//
+//			rides.add(ride);
+//		}
+//		rideRepository.saveAll(rides);
+//	}
 }

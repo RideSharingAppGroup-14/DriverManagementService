@@ -13,7 +13,7 @@ public class ActiveRideDto {
     @JsonProperty("ride_id")
     private String rideId;
 
-    private RidePlaceDto pickup;
-    private RidePlaceDto dropoff;
+    private RidePlaceDetailsDto pickup;
+    private RidePlaceDetailsDto dropoff;
     private RiderDto rider;
 }

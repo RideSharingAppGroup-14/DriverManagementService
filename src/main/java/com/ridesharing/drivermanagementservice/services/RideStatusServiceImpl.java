@@ -21,6 +21,7 @@ import com.ridesharing.drivermanagementservice.repositories.EarningsRepository;
 import com.ridesharing.drivermanagementservice.repositories.RideLocationRepository;
 import com.ridesharing.drivermanagementservice.repositories.RideRepository;
 import com.ridesharing.drivermanagementservice.utils.CoordinatesUtils;
+import com.ridesharing.drivermanagementservice.utils.RideUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -57,24 +58,9 @@ public class RideStatusServiceImpl implements RideStatusService {
 
         ActiveRideDto dto = new ActiveRideDto();
         dto.setRideId(ride.getRideId());
-
-        RidePlaceDto pickup = new RidePlaceDto();
-        pickup.setLatitude(ride.getPickupLatitude());
-        pickup.setLongitude(ride.getPickupLongitude());
-        pickup.setName(ride.getPickupAddress());
-        dto.setPickup(pickup);
-
-        RidePlaceDto dropoff = new RidePlaceDto();
-        dropoff.setLatitude(ride.getDropoffLatitude());
-        dropoff.setLongitude(ride.getDropoffLongitude());
-        dropoff.setName(ride.getDropoffAddress());
-        dto.setDropoff(dropoff);
-
-        RiderDto riderDto = new RiderDto();
-        riderDto.setFirstName(ride.getRiderFirstName());
-        riderDto.setLastName(ride.getRiderLastName());
-        riderDto.setPhone(ride.getRiderPhone());
-        dto.setRider(riderDto);
+        dto.setPickup(RideUtils.getPickupDto(ride));
+        dto.setDropoff(RideUtils.getDropOffDto(ride));
+        dto.setRider(RideUtils.getRiderDto(ride));
 
         return dto;
     }

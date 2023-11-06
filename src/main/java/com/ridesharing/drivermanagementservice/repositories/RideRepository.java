@@ -1,6 +1,8 @@
 package com.ridesharing.drivermanagementservice.repositories;
 
 import com.ridesharing.drivermanagementservice.models.Ride;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -14,5 +16,5 @@ public interface RideRepository extends JpaRepository<Ride, Long> {
 
     Optional<Ride> findByRideId(String rideId);
 
-
+    Page<Ride> findAllByDriverIdOrderByUpdatedAtDesc(String driverId, Pageable pageable);
 }

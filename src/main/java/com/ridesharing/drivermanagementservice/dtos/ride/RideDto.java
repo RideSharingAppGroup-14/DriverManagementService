@@ -18,7 +18,7 @@ public class RideDto {
     private RiderDto rider;
 
     private String status;
-    private Float distance;
+    private Double distance;
     private Float amount;
     private Integer duration;
 }
