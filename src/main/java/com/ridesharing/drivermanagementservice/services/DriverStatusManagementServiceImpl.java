@@ -12,6 +12,7 @@ import com.ridesharing.drivermanagementservice.repositories.DriverStatusReposito
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.Optional;
 
 @Service
@@ -30,6 +31,7 @@ public class DriverStatusManagementServiceImpl implements DriverStatusManagement
         DriverStatus driverStatus = driverStatusRepository.findByDriverId(driverId)
                 .orElse(new DriverStatus());
 
+        Instant currentTime = Instant.now();
         if (availabilityStatusUpdateDto.getStatus()) {
             Double latitude = availabilityStatusUpdateDto.getLatitude();
             Double longitude = availabilityStatusUpdateDto.getLongitude();
@@ -38,12 +40,14 @@ public class DriverStatusManagementServiceImpl implements DriverStatusManagement
             }
             driverStatus.setLatitude(latitude);
             driverStatus.setLongitude(longitude);
+            driverStatus.setLocationUpdatedAt(currentTime);
 
             // Get city from coordinates
             Optional<City> cityOptional = cityRepository.findByCoordinates(latitude, longitude);
             cityOptional.ifPresent(driverStatus::setCity);
         }
         driverStatus.setStatus(availabilityStatusUpdateDto.getStatus());
+        driverStatus.setStatusUpdatedAt(currentTime);
         driverStatus.setDriverId(driverId);
 
         driverStatusRepository.save(driverStatus);

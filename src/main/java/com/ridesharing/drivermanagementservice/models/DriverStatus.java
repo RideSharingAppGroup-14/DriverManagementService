@@ -5,7 +5,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
 
@@ -21,10 +20,6 @@ public class DriverStatus extends BaseDriverModel {
     private Boolean status;
     private Double latitude;
     private Double longitude;
-
-    @UpdateTimestamp
     private Instant statusUpdatedAt;
-
-    @UpdateTimestamp
     private Instant locationUpdatedAt;
 }
