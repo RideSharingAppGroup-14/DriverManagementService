@@ -30,6 +30,7 @@ public class RideAssignmentServiceImpl implements RideAssignmentService {
     private final CityRepository cityRepository;
     private final DriversSearchStrategy driversSearchStrategy;
     private final DriverStatusRepository driverStatusRepository;
+    private final ExternalServicesHandler externalServicesHandler;
 
     @Value("${search.radius.in-km}")
     private Integer searchRadiusInKm;
@@ -116,6 +117,10 @@ public class RideAssignmentServiceImpl implements RideAssignmentService {
                 throw new RideAlreadyProcessedException("This request has expired");
             }
             if (rideAcceptanceRequestDto.isAccepted()) {
+                // TODO: Pass driver id to Ride Management service while notifying
+                // Updating Ride using Ride Management Service
+                externalServicesHandler.updateRideStatus(rideAcceptanceRequestDto.getRideId(), RideStatus.ASSIGNED.getValue());
+
                 ride.setDriverId(driverId);
                 ride.setStatus(RideStatus.ASSIGNED.getValue());
                 rideRepository.save(ride);

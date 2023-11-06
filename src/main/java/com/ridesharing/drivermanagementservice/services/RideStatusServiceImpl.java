@@ -6,8 +6,6 @@ import com.ridesharing.drivermanagementservice.dtos.location.LocationTimestampDt
 import com.ridesharing.drivermanagementservice.dtos.requests.CancelRideRequestDto;
 import com.ridesharing.drivermanagementservice.dtos.requests.RideLocationUpdateDto;
 import com.ridesharing.drivermanagementservice.dtos.ride.ActiveRideDto;
-import com.ridesharing.drivermanagementservice.dtos.ride.RidePlaceDto;
-import com.ridesharing.drivermanagementservice.dtos.ride.RiderDto;
 import com.ridesharing.drivermanagementservice.exceptions.InvalidRideException;
 import com.ridesharing.drivermanagementservice.exceptions.MissingRequiredFieldsException;
 import com.ridesharing.drivermanagementservice.exceptions.NoActiveRideException;
@@ -41,6 +39,7 @@ public class RideStatusServiceImpl implements RideStatusService {
     private final EarningsRepository earningsRepository;
     private final RideLocationRepository rideLocationRepository;
     private final DriverStatusRepository driverStatusRepository;
+    private final ExternalServicesHandler externalServicesHandler;
 
     @Value("${price.per-km}")
     float pricePerKm;
@@ -77,6 +76,9 @@ public class RideStatusServiceImpl implements RideStatusService {
             throw new MissingRequiredFieldsException("Location details are missing");
         }
 
+        // Updating Ride using Ride Management Service
+        externalServicesHandler.updateRideStatus(rideId, RideStatus.STARTED.getValue());
+
         ride.setStatus(RideStatus.STARTED.getValue());
         ride.setPickupLatitude(locationDto.getLatitude());
         ride.setPickupLongitude(locationDto.getLongitude());
@@ -102,7 +104,8 @@ public class RideStatusServiceImpl implements RideStatusService {
             throw new MissingRequiredFieldsException("Location details are missing");
         }
 
-        // TODO: Notify RideManagement Service
+        // Updating Ride Status using Ride Management Service
+        externalServicesHandler.updateRideStatus(rideId, RideStatus.ENDED.getValue());
 
         // Update status, distance, amount, duration
         Instant currentTime = Instant.now();
@@ -112,6 +115,8 @@ public class RideStatusServiceImpl implements RideStatusService {
         );
         float amount = (float) distance * pricePerKm;
         int duration = (int) Duration.between(ride.getPickupTimestamp(), currentTime).toMinutes();
+
+        // TODO: Update amount, duration, distance in Ride by calling Ride Management Service
 
         ride.setDistance(distance);
         ride.setAmount(amount);
@@ -139,7 +144,9 @@ public class RideStatusServiceImpl implements RideStatusService {
                 .orElseThrow(() -> new InvalidRideException("Invalid ride"));
 
         if (VALID_RIDE_CANCELLABLE_STATUS.contains(ride.getStatus())) {
-            // TODO: Notify RideManagement for cancellation from Driver's end
+            // Updating Ride using Ride Management Service
+            externalServicesHandler.updateRideStatus(rideId, RideStatus.CANCELLED.getValue());
+
             ride.setStatus(RideStatus.CANCELLED.getValue());
             rideRepository.save(ride);
 
@@ -156,7 +163,6 @@ public class RideStatusServiceImpl implements RideStatusService {
         Ride ride = rideRepository.findByRideId(rideId)
                 .orElseThrow(() -> new InvalidRideException("Invalid ride"));
         if (RideStatus.ENDED.getValue().equals(ride.getStatus())) {
-            // TODO: Update ride status as completed in RideManagement Service
 
             // Update status as completed
             ride.setStatus(RideStatus.COMPLETED.getValue());

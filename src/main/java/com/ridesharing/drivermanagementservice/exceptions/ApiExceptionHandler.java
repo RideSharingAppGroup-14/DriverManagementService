@@ -43,6 +43,12 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         return new ErrorResponseDto(ex.getMessage());
     }
 
+    @ExceptionHandler(UnableToProcessException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponseDto handleUnableToProcessException(UnableToProcessException ex) {
+        return new ErrorResponseDto(ex.getMessage());
+    }
+
     @ExceptionHandler(Throwable.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponseDto handleUnknownServerException() {
