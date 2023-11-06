@@ -3,7 +3,6 @@ package com.ridesharing.drivermanagementservice.externalclients.ridemgmt;
 import com.ridesharing.drivermanagementservice.externalclients.ridemgmt.dtos.RideStatusRequestDto;
 import com.ridesharing.drivermanagementservice.externalclients.ridemgmt.dtos.RideStatusResponseDto;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -18,8 +17,8 @@ public class RideManagementClient {
     @Value("${ride-mgmt.status.url}")
     private String rideStatusUrl;
 
-    public RideManagementClient(RestTemplateBuilder restTemplateBuilder) {
-        this.restTemplate = restTemplateBuilder.build();
+    public RideManagementClient(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
     }
 
     public RideStatusResponseDto updateRideStatus(RideStatusRequestDto request) {

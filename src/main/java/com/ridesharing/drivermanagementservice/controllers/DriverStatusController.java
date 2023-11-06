@@ -8,13 +8,11 @@ import com.ridesharing.drivermanagementservice.services.DriverStatusManagementSe
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
-
 @RestController
 @RequestMapping("/v1")
 public class DriverStatusController {
 
-    private DriverStatusManagementService driverStatusManagementService;
+    private final DriverStatusManagementService driverStatusManagementService;
 
     public DriverStatusController(DriverStatusManagementService driverStatusManagementService) {
         this.driverStatusManagementService = driverStatusManagementService;

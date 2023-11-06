@@ -4,7 +4,6 @@ import com.ridesharing.drivermanagementservice.externalclients.usermgmt.dtos.Upd
 import com.ridesharing.drivermanagementservice.externalclients.usermgmt.dtos.UpdateProfileResponseDto;
 import com.ridesharing.drivermanagementservice.externalclients.usermgmt.dtos.UserProfileDto;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -21,8 +20,8 @@ public class UserManagementClient {
     @Value("${user-mgmt.profile.url}")
     private String profileUrl;
 
-    public UserManagementClient(RestTemplateBuilder restTemplateBuilder) {
-        this.restTemplate = restTemplateBuilder.build();
+    public UserManagementClient(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
     }
 
     public UserProfileDto getProfile(String userId) {
