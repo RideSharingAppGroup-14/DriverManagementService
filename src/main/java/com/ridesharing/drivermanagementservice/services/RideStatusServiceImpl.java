@@ -110,7 +110,7 @@ public class RideStatusServiceImpl implements RideStatusService {
             ride.getPickupLatitude(), ride.getPickupLongitude(),
             locationDto.getLatitude(), locationDto.getLongitude()
         );
-        float amount = (float) (distance * pricePerKm);
+        float amount = Math.round(distance * pricePerKm * 100.0f) / 100.0f;
         int duration = (int) Duration.between(ride.getPickupTimestamp(), currentTime).toMinutes();
 
         // Updating Ride details using Ride Management Service
