@@ -3,7 +3,8 @@ package com.ridesharing.drivermanagementservice.services;
 import com.ridesharing.drivermanagementservice.dtos.requests.ProfileUpdateDto;
 import com.ridesharing.drivermanagementservice.exceptions.UnableToProcessException;
 import com.ridesharing.drivermanagementservice.externalclients.ridemgmt.RideManagementClient;
-import com.ridesharing.drivermanagementservice.externalclients.ridemgmt.dtos.RideStatusRequestDto;
+import com.ridesharing.drivermanagementservice.externalclients.ridemgmt.dtos.DriverDetails;
+import com.ridesharing.drivermanagementservice.externalclients.ridemgmt.dtos.RideDetailsUpdateDto;
 import com.ridesharing.drivermanagementservice.externalclients.ridemgmt.dtos.RideStatusResponseDto;
 import com.ridesharing.drivermanagementservice.externalclients.usermgmt.UserManagementClient;
 import com.ridesharing.drivermanagementservice.externalclients.usermgmt.dtos.UpdateProfileRequestDto;
@@ -27,14 +28,50 @@ public class ExternalServicesHandler {
     @Value("${external.service.user-mgmt.enabled}")
     private boolean userManagementServiceEnabled;
 
-    public void updateRideStatus(String rideId, String status) {
-        if (rideManagementServiceEnabled) {
-            // Update Ride status as assigned by notifying Ride Management Service
-            RideStatusRequestDto rideStatusRequest = new RideStatusRequestDto();
-            rideStatusRequest.setRideId(rideId);
-            rideStatusRequest.setStatus(status);
+    public void updateRideAssigned(String rideId, String status, DriverProfile profile) {
+        RideDetailsUpdateDto rideDetailsUpdateDto = new RideDetailsUpdateDto();
+        rideDetailsUpdateDto.setRideId(rideId);
+        rideDetailsUpdateDto.setStatus(status);
+        DriverDetails driverDetails = new DriverDetails();
+        driverDetails.setDriverId(profile.getDriverId());
+        driverDetails.setFirstName(profile.getFirstName());
+        driverDetails.setLastName(profile.getLastName());
+        driverDetails.setPhone(profile.getPhone());
+        rideDetailsUpdateDto.setDriverDetails(driverDetails);
 
-            RideStatusResponseDto rideStatusResponse = rideManagementClient.updateRideStatus(rideStatusRequest);
+        updateRide(rideDetailsUpdateDto);
+    }
+
+    public void updateRideStarted(String rideId, String status) {
+        RideDetailsUpdateDto rideDetailsUpdateDto = new RideDetailsUpdateDto();
+        rideDetailsUpdateDto.setRideId(rideId);
+        rideDetailsUpdateDto.setStatus(status);
+
+        updateRide(rideDetailsUpdateDto);
+    }
+
+    public void updateRideEnded(String rideId, String status, Double distance, Float amount, Integer duration) {
+        RideDetailsUpdateDto rideDetailsUpdateDto = new RideDetailsUpdateDto();
+        rideDetailsUpdateDto.setRideId(rideId);
+        rideDetailsUpdateDto.setStatus(status);
+        rideDetailsUpdateDto.setDistance(distance);
+        rideDetailsUpdateDto.setAmount(amount);
+        rideDetailsUpdateDto.setDuration(duration);
+        updateRide(rideDetailsUpdateDto);
+    }
+
+    public void updateRideCancelled(String rideId, String status, String reason) {
+        RideDetailsUpdateDto rideDetailsUpdateDto = new RideDetailsUpdateDto();
+        rideDetailsUpdateDto.setRideId(rideId);
+        rideDetailsUpdateDto.setStatus(status);
+        rideDetailsUpdateDto.setCancellationReason(reason);
+
+        updateRide(rideDetailsUpdateDto);
+    }
+
+    private void updateRide(RideDetailsUpdateDto rideDetailsUpdateDto) {
+        if (rideManagementServiceEnabled) {
+            RideStatusResponseDto rideStatusResponse = rideManagementClient.updateRideStatus(rideDetailsUpdateDto);
             if (rideStatusResponse == null) {
                 throw new RuntimeException("Could not process this request");
             } else if (!rideStatusResponse.getSuccess()) {

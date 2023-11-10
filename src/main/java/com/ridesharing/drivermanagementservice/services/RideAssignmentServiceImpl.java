@@ -5,12 +5,15 @@ import com.ridesharing.drivermanagementservice.dtos.requests.RideAcceptanceReque
 import com.ridesharing.drivermanagementservice.dtos.requests.RidePlaceRequestDto;
 import com.ridesharing.drivermanagementservice.dtos.requests.RideRequestDto;
 import com.ridesharing.drivermanagementservice.exceptions.DriverNotFoundException;
+import com.ridesharing.drivermanagementservice.exceptions.InvalidDriverException;
 import com.ridesharing.drivermanagementservice.exceptions.RideAlreadyProcessedException;
 import com.ridesharing.drivermanagementservice.exceptions.ServiceNotAvailableException;
 import com.ridesharing.drivermanagementservice.models.City;
+import com.ridesharing.drivermanagementservice.models.DriverProfile;
 import com.ridesharing.drivermanagementservice.models.DriverStatus;
 import com.ridesharing.drivermanagementservice.models.Ride;
 import com.ridesharing.drivermanagementservice.repositories.CityRepository;
+import com.ridesharing.drivermanagementservice.repositories.DriverProfileRepository;
 import com.ridesharing.drivermanagementservice.repositories.DriverStatusRepository;
 import com.ridesharing.drivermanagementservice.repositories.RideRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +33,7 @@ public class RideAssignmentServiceImpl implements RideAssignmentService {
     private final CityRepository cityRepository;
     private final DriversSearchStrategy driversSearchStrategy;
     private final DriverStatusRepository driverStatusRepository;
+    private final DriverProfileRepository driverProfileRepository;
     private final ExternalServicesHandler externalServicesHandler;
 
     @Value("${search.radius.in-km}")
@@ -102,6 +106,8 @@ public class RideAssignmentServiceImpl implements RideAssignmentService {
     @Override
     public void rideAcceptance(String driverId, RideAcceptanceRequestDto rideAcceptanceRequestDto)
             throws RideAlreadyProcessedException {
+        DriverProfile profile = driverProfileRepository.findByDriverId(driverId)
+                .orElseThrow(() -> new InvalidDriverException("Invalid driver"));
         Ride ride = rideRepository.findByRideId(rideAcceptanceRequestDto.getRideId())
                 .orElse(new Ride());
         if (RideStatus.EXPIRED.getValue().equals(ride.getStatus())) {
@@ -117,9 +123,10 @@ public class RideAssignmentServiceImpl implements RideAssignmentService {
                 throw new RideAlreadyProcessedException("This request has expired");
             }
             if (rideAcceptanceRequestDto.isAccepted()) {
-                // TODO: Pass driver id to Ride Management service while notifying
+                // Pass driver details to Ride Management service while notifying
                 // Updating Ride using Ride Management Service
-                externalServicesHandler.updateRideStatus(rideAcceptanceRequestDto.getRideId(), RideStatus.ASSIGNED.getValue());
+                externalServicesHandler.updateRideAssigned(
+                        rideAcceptanceRequestDto.getRideId(), RideStatus.ASSIGNED.getValue(), profile);
 
                 ride.setDriverId(driverId);
                 ride.setStatus(RideStatus.ASSIGNED.getValue());

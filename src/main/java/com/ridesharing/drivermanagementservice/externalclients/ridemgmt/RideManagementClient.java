@@ -1,6 +1,6 @@
 package com.ridesharing.drivermanagementservice.externalclients.ridemgmt;
 
-import com.ridesharing.drivermanagementservice.externalclients.ridemgmt.dtos.RideStatusRequestDto;
+import com.ridesharing.drivermanagementservice.externalclients.ridemgmt.dtos.RideDetailsUpdateDto;
 import com.ridesharing.drivermanagementservice.externalclients.ridemgmt.dtos.RideStatusResponseDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -21,7 +21,7 @@ public class RideManagementClient {
         this.restTemplate = restTemplate;
     }
 
-    public RideStatusResponseDto updateRideStatus(RideStatusRequestDto request) {
+    public RideStatusResponseDto updateRideStatus(RideDetailsUpdateDto request) {
         ResponseEntity<RideStatusResponseDto> responseEntity =
                 restTemplate.exchange(rideStatusUrl, HttpMethod.PUT, new HttpEntity<>(request), RideStatusResponseDto.class);
         RideStatusResponseDto response = responseEntity.getBody();

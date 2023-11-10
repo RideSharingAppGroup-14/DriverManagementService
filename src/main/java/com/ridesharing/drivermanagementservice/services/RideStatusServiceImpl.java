@@ -77,7 +77,7 @@ public class RideStatusServiceImpl implements RideStatusService {
         }
 
         // Updating Ride using Ride Management Service
-        externalServicesHandler.updateRideStatus(rideId, RideStatus.STARTED.getValue());
+        externalServicesHandler.updateRideStarted(rideId, RideStatus.STARTED.getValue());
 
         ride.setStatus(RideStatus.STARTED.getValue());
         ride.setPickupLatitude(locationDto.getLatitude());
@@ -104,19 +104,17 @@ public class RideStatusServiceImpl implements RideStatusService {
             throw new MissingRequiredFieldsException("Location details are missing");
         }
 
-        // Updating Ride Status using Ride Management Service
-        externalServicesHandler.updateRideStatus(rideId, RideStatus.ENDED.getValue());
-
         // Update status, distance, amount, duration
         Instant currentTime = Instant.now();
         double distance = CoordinatesUtils.calculateDistance(
             ride.getPickupLatitude(), ride.getPickupLongitude(),
             locationDto.getLatitude(), locationDto.getLongitude()
         );
-        float amount = (float) distance * pricePerKm;
+        float amount = (float) (distance * pricePerKm);
         int duration = (int) Duration.between(ride.getPickupTimestamp(), currentTime).toMinutes();
 
-        // TODO: Update amount, duration, distance in Ride by calling Ride Management Service
+        // Updating Ride details using Ride Management Service
+        externalServicesHandler.updateRideEnded(rideId, RideStatus.ENDED.getValue(), distance, amount, duration);
 
         ride.setDistance(distance);
         ride.setAmount(amount);
@@ -145,7 +143,7 @@ public class RideStatusServiceImpl implements RideStatusService {
 
         if (VALID_RIDE_CANCELLABLE_STATUS.contains(ride.getStatus())) {
             // Updating Ride using Ride Management Service
-            externalServicesHandler.updateRideStatus(rideId, RideStatus.CANCELLED.getValue());
+            externalServicesHandler.updateRideCancelled(rideId, RideStatus.CANCELLED.getValue(), cancelRideRequestDto.getReason());
 
             ride.setStatus(RideStatus.CANCELLED.getValue());
             rideRepository.save(ride);

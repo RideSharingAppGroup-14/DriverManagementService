@@ -5,7 +5,9 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class RideStatusRequestDto {
-    private String rideId;
-    private String status;
+public class DriverDetails {
+    private String driverId;
+    private String firstName;
+    private String lastName;
+    private String phone;
 }
