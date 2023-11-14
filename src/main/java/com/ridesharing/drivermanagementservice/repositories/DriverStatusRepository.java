@@ -6,11 +6,12 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
 public interface DriverStatusRepository extends JpaRepository<DriverStatus, Long> {
 
-    Optional<DriverStatus> findByDriverId(String driverId);
+    Optional<DriverStatus> findByDriverId(UUID driverId);
 
     List<DriverStatus> findAllByCity_IdAndStatusAndLatitudeBetweenAndLongitudeBetween(
             Long cityId, boolean status,

@@ -16,7 +16,6 @@ import com.ridesharing.drivermanagementservice.models.Ride;
 import com.ridesharing.drivermanagementservice.models.RideLocation;
 import com.ridesharing.drivermanagementservice.repositories.DriverStatusRepository;
 import com.ridesharing.drivermanagementservice.repositories.EarningsRepository;
-import com.ridesharing.drivermanagementservice.repositories.RideLocationRepository;
 import com.ridesharing.drivermanagementservice.repositories.RideRepository;
 import com.ridesharing.drivermanagementservice.utils.CoordinatesUtils;
 import com.ridesharing.drivermanagementservice.utils.RideUtils;
@@ -26,10 +25,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -37,7 +33,7 @@ public class RideStatusServiceImpl implements RideStatusService {
 
     private final RideRepository rideRepository;
     private final EarningsRepository earningsRepository;
-    private final RideLocationRepository rideLocationRepository;
+//    private final RideLocationRepository rideLocationRepository;
     private final DriverStatusRepository driverStatusRepository;
     private final ExternalServicesHandler externalServicesHandler;
 
@@ -51,7 +47,7 @@ public class RideStatusServiceImpl implements RideStatusService {
     );
 
     @Override
-    public ActiveRideDto getActiveRide(String driverId) throws NoActiveRideException {
+    public ActiveRideDto getActiveRide(UUID driverId) throws NoActiveRideException {
         Ride ride = rideRepository.findActiveRideByDriverId(driverId)
                 .orElseThrow(() -> new NoActiveRideException("No active ride"));
 
@@ -65,7 +61,7 @@ public class RideStatusServiceImpl implements RideStatusService {
     }
 
     @Override
-    public void startRide(String rideId, LocationDto locationDto) throws InvalidRideException, RideAlreadyProcessedException {
+    public void startRide(UUID rideId, LocationDto locationDto) throws InvalidRideException, RideAlreadyProcessedException {
         Ride ride = rideRepository.findByRideId(rideId)
                 .orElseThrow(() -> new InvalidRideException("Invalid ride"));
         if (RideStatus.STARTED.getValue().equals(ride.getStatus())) {
@@ -79,6 +75,13 @@ public class RideStatusServiceImpl implements RideStatusService {
         // Updating Ride using Ride Management Service
         externalServicesHandler.updateRideStarted(rideId, RideStatus.STARTED.getValue());
 
+        RideLocation rideLocation = new RideLocation();
+        rideLocation.setLatitude(locationDto.getLatitude());
+        rideLocation.setLongitude(locationDto.getLongitude());
+        rideLocation.setTimestamp(Instant.now());
+        ride.getLocations().add(rideLocation);
+//        rideLocationRepository.save(rideLocation);
+
         ride.setStatus(RideStatus.STARTED.getValue());
         ride.setPickupLatitude(locationDto.getLatitude());
         ride.setPickupLongitude(locationDto.getLongitude());
@@ -86,14 +89,14 @@ public class RideStatusServiceImpl implements RideStatusService {
         rideRepository.save(ride);
 
         // Update pickup coordinates as the first ride location
-        updateRideLocation(locationDto, ride);
+//        updateRideLocation(locationDto, ride);
 
         // Update driver's availability to false and coordinates as the latest driver's location
         updateDriverStatus(ride, false, locationDto);
     }
 
     @Override
-    public void endRide(String rideId, LocationDto locationDto) throws InvalidRideException, RideAlreadyProcessedException {
+    public void endRide(UUID rideId, LocationDto locationDto) throws InvalidRideException, RideAlreadyProcessedException {
         Ride ride = rideRepository.findByRideId(rideId)
                 .orElseThrow(() -> new InvalidRideException("Invalid ride"));
         if (RideStatus.ENDED.getValue().equals(ride.getStatus())) {
@@ -116,6 +119,13 @@ public class RideStatusServiceImpl implements RideStatusService {
         // Updating Ride details using Ride Management Service
         externalServicesHandler.updateRideEnded(rideId, RideStatus.ENDED.getValue(), distance, amount, duration);
 
+        RideLocation rideLocation = new RideLocation();
+        rideLocation.setLatitude(locationDto.getLatitude());
+        rideLocation.setLongitude(locationDto.getLongitude());
+        rideLocation.setTimestamp(Instant.now());
+        ride.getLocations().add(rideLocation);
+//        rideLocationRepository.save(rideLocation);
+
         ride.setDistance(distance);
         ride.setAmount(amount);
         ride.setDuration(duration);
@@ -126,14 +136,14 @@ public class RideStatusServiceImpl implements RideStatusService {
         rideRepository.save(ride);
 
         // Update dropoff coordinates as the last ride location
-        updateRideLocation(locationDto, ride);
+//        updateRideLocation(locationDto, ride);
 
         // Update driver's availability to true and coordinates as the latest driver's location
         updateDriverStatus(ride, true, locationDto);
     }
 
     @Override
-    public void cancelRide(String rideId, CancelRideRequestDto cancelRideRequestDto) throws InvalidRideException, RideAlreadyProcessedException {
+    public void cancelRide(UUID rideId, CancelRideRequestDto cancelRideRequestDto) throws InvalidRideException, RideAlreadyProcessedException {
         if (cancelRideRequestDto.getLatitude() == null || cancelRideRequestDto.getLongitude() == null) {
             throw new MissingRequiredFieldsException("Location details are missing");
         }
@@ -157,7 +167,7 @@ public class RideStatusServiceImpl implements RideStatusService {
     }
 
     @Override
-    public void notifyRideCompleted(String rideId) throws InvalidRideException {
+    public void notifyRideCompleted(UUID rideId) throws InvalidRideException {
         Ride ride = rideRepository.findByRideId(rideId)
                 .orElseThrow(() -> new InvalidRideException("Invalid ride"));
         if (RideStatus.ENDED.getValue().equals(ride.getStatus())) {
@@ -180,7 +190,7 @@ public class RideStatusServiceImpl implements RideStatusService {
 
     // This should be called when Rider cancels it
     @Override
-    public void notifyRideCancelled(String rideId) throws InvalidRideException {
+    public void notifyRideCancelled(UUID rideId) throws InvalidRideException {
         Ride ride = rideRepository.findByRideId(rideId)
                 .orElseThrow(() -> new InvalidRideException("Invalid ride"));
 
@@ -197,7 +207,7 @@ public class RideStatusServiceImpl implements RideStatusService {
     }
 
     @Override
-    public void updateRideLocation(String rideId, RideLocationUpdateDto rideLocationUpdateDto) throws InvalidRideException {
+    public void updateRideLocation(UUID rideId, RideLocationUpdateDto rideLocationUpdateDto) throws InvalidRideException {
         Ride ride = rideRepository.findByRideId(rideId)
                 .orElseThrow(() -> new InvalidRideException("Invalid ride"));
         if (RideStatus.STARTED.getValue().equals(ride.getStatus())) {
@@ -210,12 +220,14 @@ public class RideStatusServiceImpl implements RideStatusService {
                     rideLocation.setLatitude(location.getLatitude());
                     rideLocation.setLongitude(location.getLongitude());
                     rideLocation.setTimestamp(location.getTimestamp());
-                    rideLocation.setRide(ride);
+//                    rideLocation.setRide(ride);
 
                     rideLocationList.add(rideLocation);
                 }
 
-                rideLocationRepository.saveAll(rideLocationList);
+//                rideLocationRepository.saveAll(rideLocationList);
+                ride.getLocations().addAll(rideLocationList);
+                rideRepository.save(ride);
             }
 
         } else {
@@ -223,14 +235,14 @@ public class RideStatusServiceImpl implements RideStatusService {
         }
     }
 
-    private void updateRideLocation(LocationDto locationDto, Ride ride) {
-        RideLocation rideLocation = new RideLocation();
-        rideLocation.setLatitude(locationDto.getLatitude());
-        rideLocation.setLongitude(locationDto.getLongitude());
-        rideLocation.setTimestamp(Instant.now());
-        rideLocation.setRide(ride);
-        rideLocationRepository.save(rideLocation);
-    }
+//    private void updateRideLocation(LocationDto locationDto, Ride ride) {
+//        RideLocation rideLocation = new RideLocation();
+//        rideLocation.setLatitude(locationDto.getLatitude());
+//        rideLocation.setLongitude(locationDto.getLongitude());
+//        rideLocation.setTimestamp(Instant.now());
+////        rideLocation.setRide(ride);
+//        rideLocationRepository.save(rideLocation);
+//    }
 
     private void updateDriverStatus(Ride ride, boolean status, LocationDto locationDto) {
         Optional<DriverStatus> driverStatusOptional = driverStatusRepository.findByDriverId(ride.getDriverId());

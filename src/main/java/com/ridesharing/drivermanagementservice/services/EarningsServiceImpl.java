@@ -6,6 +6,8 @@ import com.ridesharing.drivermanagementservice.models.Earnings;
 import com.ridesharing.drivermanagementservice.repositories.EarningsRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 public class EarningsServiceImpl implements EarningsService {
 
@@ -16,7 +18,7 @@ public class EarningsServiceImpl implements EarningsService {
     }
 
     @Override
-    public EarningsDto getEarnings(String driverId) throws EarningsNotFoundException {
+    public EarningsDto getEarnings(UUID driverId) throws EarningsNotFoundException {
         Earnings earnings = earningsRepository.findByDriverId(driverId)
                 .orElseThrow(() -> new EarningsNotFoundException("No earnings found"));
 

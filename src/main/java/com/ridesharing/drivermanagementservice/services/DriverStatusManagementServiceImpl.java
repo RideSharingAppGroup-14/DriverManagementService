@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor
@@ -23,7 +24,7 @@ public class DriverStatusManagementServiceImpl implements DriverStatusManagement
     private CityRepository cityRepository;
 
     @Override
-    public void updateAvailability(String driverId, AvailabilityStatusUpdateDto availabilityStatusUpdateDto) {
+    public void updateAvailability(UUID driverId, AvailabilityStatusUpdateDto availabilityStatusUpdateDto) {
         if (availabilityStatusUpdateDto.getStatus() == null) {
             throw new MissingRequiredFieldsException("Status field is missing");
         }
@@ -54,7 +55,7 @@ public class DriverStatusManagementServiceImpl implements DriverStatusManagement
     }
 
     @Override
-    public void updateLocation(String driverId, LocationDto locationDto) {
+    public void updateLocation(UUID driverId, LocationDto locationDto) {
         if (locationDto.getLatitude() == null
                 || locationDto.getLongitude() == null) {
             throw new MissingRequiredFieldsException("Latitude/Longitude fields are missing");
@@ -71,7 +72,7 @@ public class DriverStatusManagementServiceImpl implements DriverStatusManagement
     }
 
     @Override
-    public LocationTimestampDto getLocation(String driverId) throws LocationNotFoundException {
+    public LocationTimestampDto getLocation(UUID driverId) throws LocationNotFoundException {
         DriverStatus driverStatus = driverStatusRepository.findByDriverId(driverId)
                 .orElseThrow(() -> new LocationNotFoundException("Location not found"));
 

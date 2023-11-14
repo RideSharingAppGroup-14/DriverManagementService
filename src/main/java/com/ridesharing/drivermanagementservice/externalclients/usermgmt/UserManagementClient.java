@@ -12,6 +12,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 @Service
 public class UserManagementClient {
@@ -24,15 +25,15 @@ public class UserManagementClient {
         this.restTemplate = restTemplate;
     }
 
-    public UserProfileDto getProfile(String userId) {
-        Map<String, String> paramMap = new HashMap<>();
+    public UserProfileDto getProfile(UUID userId) {
+        Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("userId", userId);
         ResponseEntity<UserProfileDto> responseEntity = restTemplate.getForEntity(profileUrl, UserProfileDto.class, paramMap);
         return responseEntity.getBody();
     }
 
-    public UpdateProfileResponseDto updateProfile(String userId, UpdateProfileRequestDto updateProfileRequestDto) {
-        Map<String, String> paramMap = new HashMap<>();
+    public UpdateProfileResponseDto updateProfile(UUID userId, UpdateProfileRequestDto updateProfileRequestDto) {
+        Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("userId", userId);
         ResponseEntity<UpdateProfileResponseDto> responseEntity =
                 restTemplate.exchange(profileUrl, HttpMethod.PUT, new HttpEntity<>(updateProfileRequestDto),

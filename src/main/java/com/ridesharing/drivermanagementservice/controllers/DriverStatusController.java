@@ -8,6 +8,8 @@ import com.ridesharing.drivermanagementservice.services.DriverStatusManagementSe
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/v1")
 public class DriverStatusController {
@@ -20,7 +22,7 @@ public class DriverStatusController {
 
     @PostMapping("/availability/{driver_id}")
     public ResponseEntity<?> updateAvailability(
-            @PathVariable("driver_id") String driverId,
+            @PathVariable("driver_id") UUID driverId,
             @RequestBody AvailabilityStatusUpdateDto availabilityStatusUpdateDto) {
         driverStatusManagementService.updateAvailability(driverId, availabilityStatusUpdateDto);
         return ResponseEntity.ok().build();
@@ -28,14 +30,14 @@ public class DriverStatusController {
 
     @PutMapping("/location/{driver_id}")
     public ResponseEntity<?> updateLocation(
-            @PathVariable("driver_id") String driverId,
+            @PathVariable("driver_id") UUID driverId,
             @RequestBody LocationDto locationDto) {
         driverStatusManagementService.updateLocation(driverId, locationDto);
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/location/{driver_id}")
-    public ResponseEntity<LocationTimestampDto> getLocation(@PathVariable("driver_id") String driverId)
+    public ResponseEntity<LocationTimestampDto> getLocation(@PathVariable("driver_id") UUID driverId)
             throws LocationNotFoundException {
         return ResponseEntity.ok(driverStatusManagementService.getLocation(driverId));
     }

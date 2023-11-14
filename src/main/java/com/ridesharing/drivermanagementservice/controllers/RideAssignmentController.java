@@ -9,6 +9,8 @@ import com.ridesharing.drivermanagementservice.services.RideAssignmentService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/v1/ride")
 public class RideAssignmentController {
@@ -28,7 +30,7 @@ public class RideAssignmentController {
 
     @PostMapping("/acceptance/{driver_id}")
     public ResponseEntity<?> rideAcceptance(
-            @PathVariable("driver_id") String driverId,
+            @PathVariable("driver_id") UUID driverId,
             @RequestBody RideAcceptanceRequestDto rideAcceptanceRequestDto) throws RideAlreadyProcessedException {
         rideAssignmentService.rideAcceptance(driverId, rideAcceptanceRequestDto);
         return ResponseEntity.ok().build();

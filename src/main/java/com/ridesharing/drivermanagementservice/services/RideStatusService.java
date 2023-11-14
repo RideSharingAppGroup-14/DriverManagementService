@@ -8,23 +8,25 @@ import com.ridesharing.drivermanagementservice.exceptions.InvalidRideException;
 import com.ridesharing.drivermanagementservice.exceptions.NoActiveRideException;
 import com.ridesharing.drivermanagementservice.exceptions.RideAlreadyProcessedException;
 
+import java.util.UUID;
+
 public interface RideStatusService {
-    ActiveRideDto getActiveRide(String driverId) throws NoActiveRideException;
+    ActiveRideDto getActiveRide(UUID driverId) throws NoActiveRideException;
 
-    void startRide(String rideId, LocationDto locationDto)
+    void startRide(UUID rideId, LocationDto locationDto)
             throws InvalidRideException, RideAlreadyProcessedException;
 
-    void endRide(String rideId, LocationDto locationDto)
+    void endRide(UUID rideId, LocationDto locationDto)
             throws InvalidRideException, RideAlreadyProcessedException;
 
-    void cancelRide(String rideId, CancelRideRequestDto cancelRideRequestDto)
+    void cancelRide(UUID rideId, CancelRideRequestDto cancelRideRequestDto)
             throws InvalidRideException, RideAlreadyProcessedException;
 
-    void notifyRideCompleted(String rideId) throws InvalidRideException;
+    void notifyRideCompleted(UUID rideId) throws InvalidRideException;
 
-    void notifyRideCancelled(String rideId) throws InvalidRideException;
+    void notifyRideCancelled(UUID rideId) throws InvalidRideException;
 
-    void updateRideLocation(String rideId, RideLocationUpdateDto rideLocationUpdateDto)
+    void updateRideLocation(UUID rideId, RideLocationUpdateDto rideLocationUpdateDto)
             throws InvalidRideException;
 
 }

@@ -5,11 +5,13 @@ import com.ridesharing.drivermanagementservice.dtos.location.LocationTimestampDt
 import com.ridesharing.drivermanagementservice.dtos.requests.AvailabilityStatusUpdateDto;
 import com.ridesharing.drivermanagementservice.exceptions.LocationNotFoundException;
 
+import java.util.UUID;
+
 public interface DriverStatusManagementService {
 
-    void updateAvailability(String driverId, AvailabilityStatusUpdateDto availabilityStatusUpdateDto);
+    void updateAvailability(UUID driverId, AvailabilityStatusUpdateDto availabilityStatusUpdateDto);
 
-    void updateLocation(String driverId, LocationDto locationDto);
+    void updateLocation(UUID driverId, LocationDto locationDto);
 
-    LocationTimestampDto getLocation(String driverId) throws LocationNotFoundException;
+    LocationTimestampDto getLocation(UUID driverId) throws LocationNotFoundException;
 }

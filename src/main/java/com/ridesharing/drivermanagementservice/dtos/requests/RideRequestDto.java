@@ -6,13 +6,15 @@ import com.ridesharing.drivermanagementservice.dtos.ride.RiderDto;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.UUID;
+
 @Getter
 @Setter
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class RideRequestDto {
 
     @JsonProperty("ride_id")
-    private String rideId;
+    private UUID rideId;
 
     private RidePlaceRequestDto pickup;
     private RidePlaceRequestDto dropoff;

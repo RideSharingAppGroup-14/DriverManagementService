@@ -1,6 +1,7 @@
 package com.ridesharing.drivermanagementservice.models;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.Getter;
@@ -13,7 +14,7 @@ import java.time.Instant;
 @Entity
 public class DriverStatus extends BaseDriverModel {
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "city_id")
     private City city;
 

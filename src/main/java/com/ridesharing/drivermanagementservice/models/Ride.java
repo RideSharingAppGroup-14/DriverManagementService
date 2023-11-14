@@ -7,15 +7,15 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.UUID;
 
 @Getter
 @Setter
 @Entity
-@Table(name = "Ride", uniqueConstraints = {
-        @UniqueConstraint(name = "uc_ride_rideid", columnNames = {"rideId"})
-})
-public class Ride extends BaseDriverModel {
-    private String rideId;
+public class Ride {
+    @Id
+    private UUID rideId;
+    private UUID driverId;
     private String pickupAddress;
     private double pickupLatitude;
     private double pickupLongitude;
@@ -35,6 +35,7 @@ public class Ride extends BaseDriverModel {
     @UpdateTimestamp
     private Instant updatedAt;
 
-    @OneToMany(mappedBy = "ride")
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "ride_id")
     List<RideLocation> locations;
 }

@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/v1/earnings")
 public class DriverEarningsController {
@@ -20,7 +22,7 @@ public class DriverEarningsController {
     }
 
     @GetMapping("/{driver_id}")
-    public ResponseEntity<EarningsDto> getEarnings(@PathVariable("driver_id") String driverId) throws EarningsNotFoundException {
+    public ResponseEntity<EarningsDto> getEarnings(@PathVariable("driver_id") UUID driverId) throws EarningsNotFoundException {
         return ResponseEntity.ok(earningsService.getEarnings(driverId));
     }
 }

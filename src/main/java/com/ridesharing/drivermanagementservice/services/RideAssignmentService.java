@@ -6,10 +6,12 @@ import com.ridesharing.drivermanagementservice.exceptions.DriverNotFoundExceptio
 import com.ridesharing.drivermanagementservice.exceptions.RideAlreadyProcessedException;
 import com.ridesharing.drivermanagementservice.exceptions.ServiceNotAvailableException;
 
+import java.util.UUID;
+
 public interface RideAssignmentService {
     void rideRequestNotification(RideRequestDto rideRequestDto)
             throws ServiceNotAvailableException, DriverNotFoundException, RideAlreadyProcessedException;
 
-    void rideAcceptance(String driverId, RideAcceptanceRequestDto rideAcceptanceRequestDto)
+    void rideAcceptance(UUID driverId, RideAcceptanceRequestDto rideAcceptanceRequestDto)
             throws RideAlreadyProcessedException;
 }

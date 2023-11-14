@@ -8,13 +8,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
 public interface RideRepository extends JpaRepository<Ride, Long> {
     @Query("select r from Ride r where r.driverId = ?1 and r.status = 'assigned' or r.status = 'started'")
-    Optional<Ride> findActiveRideByDriverId(String driverId);
+    Optional<Ride> findActiveRideByDriverId(UUID driverId);
 
-    Optional<Ride> findByRideId(String rideId);
+    Optional<Ride> findByRideId(UUID rideId);
 
-    Page<Ride> findAllByDriverIdOrderByUpdatedAtDesc(String driverId, Pageable pageable);
+    Page<Ride> findAllByDriverIdOrderByUpdatedAtDesc(UUID driverId, Pageable pageable);
 }

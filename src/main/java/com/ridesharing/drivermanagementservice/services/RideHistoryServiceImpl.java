@@ -12,6 +12,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 public class RideHistoryServiceImpl implements RideHistoryService {
 
@@ -22,7 +24,7 @@ public class RideHistoryServiceImpl implements RideHistoryService {
     }
 
     @Override
-    public RideHistoryDto getRideHistory(String driverId, int offset, int limit) throws RidesNotFoundException {
+    public RideHistoryDto getRideHistory(UUID driverId, int offset, int limit) throws RidesNotFoundException {
         Pageable pageable = PageRequest.of(offset, limit);
         // Page<Ride> executes additional count query. Use Slice<Ride> or List<Ride> for large set of data.
         Page<Ride> rideList = rideRepository.findAllByDriverIdOrderByUpdatedAtDesc(driverId, pageable);

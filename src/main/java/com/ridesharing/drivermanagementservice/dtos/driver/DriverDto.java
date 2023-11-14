@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -13,7 +14,7 @@ import java.time.LocalDate;
 public class DriverDto {
 
     @JsonProperty("driver_id")
-    private String driverId;
+    private UUID driverId;
 
     @JsonProperty("first_name")
     private String firstName;

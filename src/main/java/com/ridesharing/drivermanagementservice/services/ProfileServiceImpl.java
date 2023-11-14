@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -18,7 +19,7 @@ public class ProfileServiceImpl implements ProfileService {
     private final ExternalServicesHandler externalServicesHandler;
 
     @Override
-    public DriverDto getProfile(String driverId) {
+    public DriverDto getProfile(UUID driverId) {
         Optional<DriverProfile> profileOptional = driverProfileRepository.findByDriverId(driverId);
         DriverProfile profile;
         if (profileOptional.isPresent()) {
@@ -34,7 +35,7 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public void updateProfile(String driverId, ProfileUpdateDto profileUpdateDto) {
+    public void updateProfile(UUID driverId, ProfileUpdateDto profileUpdateDto) {
         DriverProfile profile = driverProfileRepository.findByDriverId(driverId)
                 .orElseThrow(() -> new InvalidDriverException("Invalid driver"));
 

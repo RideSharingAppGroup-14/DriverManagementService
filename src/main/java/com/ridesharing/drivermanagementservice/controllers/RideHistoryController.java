@@ -6,6 +6,8 @@ import com.ridesharing.drivermanagementservice.services.RideHistoryService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/v1/rides")
 public class RideHistoryController {
@@ -18,7 +20,7 @@ public class RideHistoryController {
 
     @GetMapping("/{driver_id}")
     public ResponseEntity<RideHistoryDto> getRides(
-            @PathVariable("driver_id") String driverId,
+            @PathVariable("driver_id") UUID driverId,
             @RequestParam("offset") int offset,
             @RequestParam("limit") int limit) throws RidesNotFoundException {
         return ResponseEntity.ok(rideHistoryService.getRideHistory(driverId, offset, limit));

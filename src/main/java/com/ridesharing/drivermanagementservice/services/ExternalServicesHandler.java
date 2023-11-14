@@ -15,6 +15,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 public class ExternalServicesHandler {
@@ -28,7 +30,7 @@ public class ExternalServicesHandler {
     @Value("${external.service.user-mgmt.enabled}")
     private boolean userManagementServiceEnabled;
 
-    public void updateRideAssigned(String rideId, String status, DriverProfile profile) {
+    public void updateRideAssigned(UUID rideId, String status, DriverProfile profile) {
         RideDetailsUpdateDto rideDetailsUpdateDto = new RideDetailsUpdateDto();
         rideDetailsUpdateDto.setRideId(rideId);
         rideDetailsUpdateDto.setStatus(status);
@@ -42,7 +44,7 @@ public class ExternalServicesHandler {
         updateRide(rideDetailsUpdateDto);
     }
 
-    public void updateRideStarted(String rideId, String status) {
+    public void updateRideStarted(UUID rideId, String status) {
         RideDetailsUpdateDto rideDetailsUpdateDto = new RideDetailsUpdateDto();
         rideDetailsUpdateDto.setRideId(rideId);
         rideDetailsUpdateDto.setStatus(status);
@@ -50,7 +52,7 @@ public class ExternalServicesHandler {
         updateRide(rideDetailsUpdateDto);
     }
 
-    public void updateRideEnded(String rideId, String status, Double distance, Float amount, Integer duration) {
+    public void updateRideEnded(UUID rideId, String status, Double distance, Float amount, Integer duration) {
         RideDetailsUpdateDto rideDetailsUpdateDto = new RideDetailsUpdateDto();
         rideDetailsUpdateDto.setRideId(rideId);
         rideDetailsUpdateDto.setStatus(status);
@@ -60,7 +62,7 @@ public class ExternalServicesHandler {
         updateRide(rideDetailsUpdateDto);
     }
 
-    public void updateRideCancelled(String rideId, String status, String reason) {
+    public void updateRideCancelled(UUID rideId, String status, String reason) {
         RideDetailsUpdateDto rideDetailsUpdateDto = new RideDetailsUpdateDto();
         rideDetailsUpdateDto.setRideId(rideId);
         rideDetailsUpdateDto.setStatus(status);
@@ -80,7 +82,7 @@ public class ExternalServicesHandler {
         }
     }
 
-    public DriverProfile getProfile(String driverId) {
+    public DriverProfile getProfile(UUID driverId) {
         if (userManagementServiceEnabled) {
             UserProfileDto userProfileDto = userManagementClient.getProfile(driverId);
 
@@ -102,7 +104,7 @@ public class ExternalServicesHandler {
         return null;
     }
 
-    public void updateProfile(String driverId, ProfileUpdateDto profileUpdateDto) {
+    public void updateProfile(UUID driverId, ProfileUpdateDto profileUpdateDto) {
         if (userManagementServiceEnabled) {
             UpdateProfileRequestDto updateProfileRequestDto = new UpdateProfileRequestDto();
             updateProfileRequestDto.setPhone(profileUpdateDto.getPhone());

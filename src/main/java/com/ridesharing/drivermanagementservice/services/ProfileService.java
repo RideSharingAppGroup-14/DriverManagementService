@@ -3,8 +3,10 @@ package com.ridesharing.drivermanagementservice.services;
 import com.ridesharing.drivermanagementservice.dtos.driver.DriverDto;
 import com.ridesharing.drivermanagementservice.dtos.requests.ProfileUpdateDto;
 
-public interface ProfileService {
-    DriverDto getProfile(String driverId);
+import java.util.UUID;
 
-    void updateProfile(String driverId, ProfileUpdateDto profileUpdateDto);
+public interface ProfileService {
+    DriverDto getProfile(UUID driverId);
+
+    void updateProfile(UUID driverId, ProfileUpdateDto profileUpdateDto);
 }

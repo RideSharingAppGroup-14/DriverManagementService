@@ -5,13 +5,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.UUID;
+
 @Getter
 @Setter
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class RideDto {
 
     @JsonProperty("ride_id")
-    private String rideId;
+    private UUID rideId;
 
     private RidePlaceDetailsDto pickup;
     private RidePlaceDetailsDto dropoff;

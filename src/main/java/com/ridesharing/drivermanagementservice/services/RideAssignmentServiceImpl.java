@@ -24,6 +24,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -72,7 +73,7 @@ public class RideAssignmentServiceImpl implements RideAssignmentService {
         // Checking ride exists or not in a case for Retry logic
         Ride ride = rideRepository.findByRideId(rideRequestDto.getRideId())
                 .orElse(new Ride());
-        if (ride.getId() == null) {
+        if (ride.getRideId() == null) {
             ride.setRideId(rideRequestDto.getRideId());
             ride.setStatus(RideStatus.PROCESSING.getValue());
 
@@ -104,7 +105,7 @@ public class RideAssignmentServiceImpl implements RideAssignmentService {
     }
 
     @Override
-    public void rideAcceptance(String driverId, RideAcceptanceRequestDto rideAcceptanceRequestDto)
+    public void rideAcceptance(UUID driverId, RideAcceptanceRequestDto rideAcceptanceRequestDto)
             throws RideAlreadyProcessedException {
         DriverProfile profile = driverProfileRepository.findByDriverId(driverId)
                 .orElseThrow(() -> new InvalidDriverException("Invalid driver"));
